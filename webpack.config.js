@@ -3,16 +3,15 @@ const autoprefixer = require("autoprefixer");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: "./src/js/index.js",
+    entry: "./src/js/index.jsx",
 
     output: {
         filename: "main.js",
         path: path.resolve(__dirname, "dist"),
-        // publicPath: "/dist/",
     },
 
     resolve: {
-        extensions: [".tsx", ".ts", ".js"],
+        extensions: [".js", ".jsx"],
     },
 
     module: {
@@ -26,8 +25,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.js$/,
-
+                test: /\.(js|jsx)$/,
                 use: ["babel-loader"],
             },
             {
@@ -70,8 +68,8 @@ module.exports = {
             removeComments: true,
         }),
     ],
+
     devServer: {
-        // contentBase: "dist/",
         inline: true,
         compress: true,
         open: false,
