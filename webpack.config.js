@@ -3,7 +3,7 @@ const autoprefixer = require("autoprefixer");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: "./src/js/index.jsx",
+    entry: "./src/js/index.js",
 
     output: {
         filename: "main.js",
@@ -39,7 +39,7 @@ module.exports = {
                 },
             },
             {
-                test: /\.s(a|c)ss$/,
+                test: /\.(css|scss)$/,
                 exclude: /(node_modules)/,
                 use: [
                     "style-loader",
