@@ -7,6 +7,8 @@ import { Button, Container, Row, Col, ButtonGroup, Badge } from "reactstrap";
 
 import Lobby from "./lobby";
 
+import { enemyField } from "./utils";
+
 import {
     selectGameMode,
     LOBBY,
@@ -58,8 +60,8 @@ class App extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col>
-                        <div className="grid d-flex flex-row w-100 mb-4">
+                    <Col className="col-md-6">
+                        <div className="grid d-flex flex-row mb-4">
                             {player.field.map(el => (
                                 <div
                                     className={el.className}
@@ -71,7 +73,7 @@ class App extends Component {
                                             { x: el.x, y: el.y },
                                             selectedShipSize,
                                             orientation,
-                                            player.ships
+                                            player.availableShips
                                         )
                                     }
                                     onMouseOver={() => (event.target.className = "cell-selected")}
@@ -81,21 +83,18 @@ class App extends Component {
                                 </div>
                             ))}
                         </div>
-                    </Col>
-                    <Col>
-                        <ButtonGroup vertical>
+                        <ButtonGroup size="sm" className="mw-100">
                             <Button onClick={() => selectShip(1)} className="mb-1">
-                                Submarine *<Badge color="light">{player.ships[1]}</Badge>
+                                Size: 1 <Badge color="light">left:{player.availableShips[1]}</Badge>
                             </Button>
                             <Button onClick={() => selectShip(2)} className="mb-1">
-                                Destroyer **<Badge color="light">{player.ships[2]}</Badge>
+                                Size: 2 <Badge color="light">left:{player.availableShips[2]}</Badge>
                             </Button>
                             <Button onClick={() => selectShip(3)} className="mb-1">
-                                Cruiser ***
-                                <Badge color="light">{player.ships[3]}</Badge>
+                                Size: 3 <Badge color="light">left:{player.availableShips[3]}</Badge>
                             </Button>
                             <Button onClick={() => selectShip(4)} className="mb-1">
-                                Battleship ****<Badge color="light">{player.ships[4]}</Badge>
+                                Size: 4 <Badge color="light">left:{player.availableShips[4]}</Badge>
                             </Button>
                             <Button color="primary" onClick={changeOrientation} className="mb-1">
                                 Rotate
@@ -108,9 +107,25 @@ class App extends Component {
                                 Reset
                             </Button>
                             <Button color="primary" className="mb-1">
-                                Set random
+                                Random
                             </Button>
                         </ButtonGroup>
+                    </Col>
+                    <Col className="col-md-6">
+                        <div className="grid d-flex flex-row mb-4">
+                            {enemyField.map(el => (
+                                <div
+                                    className={el.className}
+                                    key={nanoid()}
+                                    data-x={el.x}
+                                    data-y={el.y}
+                                    onMouseOver={() => (event.target.className = "cell-selected")}
+                                    onMouseLeave={() => (event.target.className = el.className)}
+                                >
+                                    <img src="../../src/assets/img/aspect-ratio.png"></img>
+                                </div>
+                            ))}
+                        </div>
                     </Col>
                 </Row>
             </Container>
