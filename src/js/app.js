@@ -13,125 +13,158 @@ import {
     FormGroup,
     ListGroup,
     ListGroupItem,
+    ButtonGroup,
+    Badge,
 } from "reactstrap";
 
-import { selectGameMode, SINGLEPLAYER, MULTIPLAYER, toogleRegistration } from "./actions";
+import { generateMatrixArray } from "./utils";
+
+import Lobby from "./lobby";
+
+import {
+    selectGameMode,
+    LOBBY,
+    selectShip,
+    placeShip,
+    changeOrientation,
+    reset,
+    setBattlePhase,
+    WARM_UP,
+} from "./actions";
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+    }
+
     componentDidMount() {}
+
+    handleReset() {
+        this.props.reset();
+        this.forceUpdate();
+    }
 
     render() {
         const {
-            isRegistrationFormOpened,
-            openRegistrationForm,
-            selectSingleplayer,
-            selectMultiplayer,
+            mode,
+            selectLobby,
+            selectShip,
+            placeShip,
+            field,
+            changeOrientation,
+            selectedShipSize,
+            orientation,
+            setBattlePhase,
+            ships,
         } = this.props;
 
-        const registrationForm = (
-            <>
-                {isRegistrationFormOpened ? (
-                    <>
-                        <h3>Registration</h3>
-                        <p>Create your account</p>
-                    </>
-                ) : (
-                    <>
-                        <h3>Sign in</h3>
-                        <p>Login to your account with username and password</p>
-                    </>
-                )}
-                <Form>
-                    <FormGroup>
-                        <Input
-                            type="username"
-                            name="username"
-                            id="usernameInput"
-                            placeholder="Username"
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <Input
-                            type="password"
-                            name="password"
-                            id="passwordInput"
-                            placeholder="Password"
-                        />
-                    </FormGroup>
-                    {isRegistrationFormOpened && (
-                        <FormGroup>
-                            <Input
-                                type="password"
-                                name="confirmPassword"
-                                id="confirmPasswordInput"
-                                placeholder="Confirm password"
-                            />
-                        </FormGroup>
-                    )}
-                    {isRegistrationFormOpened ? (
-                        <>
-                            <Button color="primary">Complete registration</Button>
-                            <Button onClick={openRegistrationForm} color="link">
-                                Back
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Button color="primary">Sign in</Button>
-                            <Button onClick={openRegistrationForm} color="link">
-                                Not registered?
-                            </Button>
-                        </>
-                    )}
-                </Form>
-            </>
-        );
-        return (
+        return mode === LOBBY ? (
+            <Lobby />
+        ) : (
             <Container>
-                <Row>
-                    <Col className="text-center">
-                        <h1>Battleships</h1>
-                        <p>A classic strategy game for two players.</p>
+                <Row className="mb-4 mt-2">
+                    <Col>
+                        <Button color="primary" onClick={() => setBattlePhase(WARM_UP)}>
+                            Start game
+                        </Button>
+                        <Button onClick={selectLobby} color="link">
+                            Back to lobby
+                        </Button>
                     </Col>
                 </Row>
-                <hr />
-                {registrationForm}
-                {this.props.isUserSignedIn && (
-                    <>
-                        <hr />
-                        <h3>Choose Game mode</h3>
-                        <ListGroup className="text-center">
-                            <ListGroupItem className="border-0">
-                                <Button onClick={selectSingleplayer} color="primary">
-                                    Play vs. Bot
-                                </Button>
-                            </ListGroupItem>
-                            <ListGroupItem className="border-0">
-                                <Button onClick={selectMultiplayer} color="primary">
-                                    Play vs. Friend
-                                </Button>
-                            </ListGroupItem>
-                        </ListGroup>
-                    </>
-                )}
+                <Row>
+                    <Col>
+                        <div className="grid d-flex flex-row w-100 mb-4">
+                            {field.map(el => (
+                                <div
+                                    className={el.className}
+                                    key={nanoid()}
+                                    data-x={el.x}
+                                    data-y={el.y}
+                                    onClick={() =>
+                                        placeShip(
+                                            { x: el.x, y: el.y },
+                                            selectedShipSize,
+                                            orientation,
+                                            ships
+                                        )
+                                    }
+                                    onMouseOver={() => (event.target.className = "cell-selected")}
+                                    onMouseLeave={() => (event.target.className = el.className)}
+                                >
+                                    <img src="../../src/assets/img/aspect-ratio.png"></img>
+                                </div>
+                            ))}
+                        </div>
+                    </Col>
+                    <Col>
+                        <ButtonGroup vertical>
+                            <Button onClick={() => selectShip(1)} className="mb-1">
+                                Submarine *<Badge color="light">{ships[1]}</Badge>
+                            </Button>
+                            <Button onClick={() => selectShip(2)} className="mb-1">
+                                Destroyer **<Badge color="light">{ships[2]}</Badge>
+                            </Button>
+                            <Button onClick={() => selectShip(3)} className="mb-1">
+                                Cruiser ***
+                                <Badge color="light">{ships[3]}</Badge>
+                            </Button>
+                            <Button onClick={() => selectShip(4)} className="mb-1">
+                                Battleship ****<Badge color="light">{ships[4]}</Badge>
+                            </Button>
+                            <Button color="primary" onClick={changeOrientation} className="mb-1">
+                                Rotate
+                            </Button>
+                            <Button
+                                color="primary"
+                                className="mb-1"
+                                onClick={() => this.handleReset()}
+                            >
+                                Reset
+                            </Button>
+                            <Button color="primary" className="mb-1">
+                                Set random
+                            </Button>
+                        </ButtonGroup>
+                    </Col>
+                </Row>
             </Container>
         );
     }
 }
 
 const mapStateToProps = state => {
-    const { mode } = state;
-    const { isRegistrationFormOpened } = state;
-    const { isUserSignedIn } = state;
+    const {
+        mode,
+        isRegistrationFormOpened,
+        isUserSignedIn,
+        selectedShipSize,
+        field,
+        orientation,
+        ships,
+    } = state;
 
-    return { mode, isRegistrationFormOpened, isUserSignedIn };
+    return {
+        mode,
+        isRegistrationFormOpened,
+        isUserSignedIn,
+        selectedShipSize,
+        field,
+        orientation,
+        ships,
+    };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        selectSingleplayer: () => dispatch(selectGameMode(SINGLEPLAYER)),
-        selectMultiplayer: () => dispatch(selectGameMode(MULTIPLAYER)),
+        selectLobby: () => dispatch(selectGameMode(LOBBY)),
         openRegistrationForm: () => dispatch(toogleRegistration()),
+        selectShip: size => dispatch(selectShip(size)),
+        placeShip: (position, size, orientation, ships) =>
+            dispatch(placeShip(position, size, orientation, ships)),
+        changeOrientation: () => dispatch(changeOrientation()),
+        reset: () => dispatch(reset()),
+        setBattlePhase: phase => dispatch(setBattlePhase(phase)),
     };
 };
 

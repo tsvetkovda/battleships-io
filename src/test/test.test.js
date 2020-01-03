@@ -3,7 +3,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
-import App from "./app";
+import App from "../js/app";
 
 function sum(a, b) {
     return a + b;

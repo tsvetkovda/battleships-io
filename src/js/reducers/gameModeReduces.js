@@ -1,6 +1,6 @@
 import { SELECT_GAMEMODE, LOBBY } from "../actions";
 
-const gameModeReducer = (state = LOBBY, action) => {
+const gameModeReducer = (state = "SINGLEPLAYER", action) => {
     switch (action.type) {
         case SELECT_GAMEMODE:
             return action.payload;
