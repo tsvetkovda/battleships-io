@@ -4,32 +4,32 @@ import { PLACE_SHIP, HORIZONTAL, VERTICAL, RESET } from "../actions";
 
 import { cloneDeep } from "../utils";
 
-const initialState = generateMatrixArray(10).flat();
+const initialState = { field: generateMatrixArray(10).flat(), ships: { 1: 4, 2: 3, 3: 2, 4: 1 } };
 
-const playerFieldReducer = (state = initialState, action) => {
-    console.log(action);
+const playerReducer = (state = initialState, action) => {
     switch (action.type) {
         case PLACE_SHIP:
+            const { position, orientation } = action;
             let result = cloneDeep(state);
             let indexes = [];
 
             for (let i = 0; i < action.size; i++) {
-                if (action.orientation === HORIZONTAL) {
-                    let idx = result.findIndex(
+                if (orientation === HORIZONTAL) {
+                    let idx = result.field.findIndex(
                         el =>
-                            el.x === action.position.x + i &&
-                            el.y === action.position.y &&
+                            el.x === position.x + i &&
+                            el.y === position.y &&
                             !el.locked &&
                             !el.hasShip
                     );
                     if (idx !== -1) indexes.push(idx);
                 }
 
-                if (action.orientation === VERTICAL) {
-                    let idx = result.findIndex(
+                if (orientation === VERTICAL) {
+                    let idx = result.field.findIndex(
                         el =>
-                            el.x === action.position.x &&
-                            el.y === action.position.y + i &&
+                            el.x === position.x &&
+                            el.y === position.y + i &&
                             !el.locked &&
                             !el.hasShip
                     );
@@ -39,13 +39,15 @@ const playerFieldReducer = (state = initialState, action) => {
 
             if (indexes.length === action.size && action.ships[action.size] > 0) {
                 for (let idx of indexes) {
-                    result[idx].locked = true;
-                    result[idx].hasShip = true;
-                    result[idx].className = "cell-occupied";
+                    result.field[idx].locked = true;
+                    result.field[idx].hasShip = true;
+                    result.field[idx].className = "cell-occupied";
                 }
+
+                result.ships[action.size] -= 1;
             }
 
-            return result;
+            return { field: result.field, ships: result.ships };
         case RESET:
             return initialState;
         case "SET_RANDOM":
@@ -59,4 +61,4 @@ const playerFieldReducer = (state = initialState, action) => {
     }
 };
 
-export default playerFieldReducer;
+export default playerReducer;

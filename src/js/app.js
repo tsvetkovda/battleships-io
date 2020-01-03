@@ -3,21 +3,7 @@ import { connect } from "react-redux";
 
 import nanoid from "nanoid";
 
-import {
-    Button,
-    Container,
-    Row,
-    Col,
-    Input,
-    Form,
-    FormGroup,
-    ListGroup,
-    ListGroupItem,
-    ButtonGroup,
-    Badge,
-} from "reactstrap";
-
-import { generateMatrixArray } from "./utils";
+import { Button, Container, Row, Col, ButtonGroup, Badge } from "reactstrap";
 
 import Lobby from "./lobby";
 
@@ -50,12 +36,11 @@ class App extends Component {
             selectLobby,
             selectShip,
             placeShip,
-            field,
+            player,
             changeOrientation,
             selectedShipSize,
             orientation,
             setBattlePhase,
-            ships,
         } = this.props;
 
         return mode === LOBBY ? (
@@ -75,7 +60,7 @@ class App extends Component {
                 <Row>
                     <Col>
                         <div className="grid d-flex flex-row w-100 mb-4">
-                            {field.map(el => (
+                            {player.field.map(el => (
                                 <div
                                     className={el.className}
                                     key={nanoid()}
@@ -86,7 +71,7 @@ class App extends Component {
                                             { x: el.x, y: el.y },
                                             selectedShipSize,
                                             orientation,
-                                            ships
+                                            player.ships
                                         )
                                     }
                                     onMouseOver={() => (event.target.className = "cell-selected")}
@@ -100,17 +85,17 @@ class App extends Component {
                     <Col>
                         <ButtonGroup vertical>
                             <Button onClick={() => selectShip(1)} className="mb-1">
-                                Submarine *<Badge color="light">{ships[1]}</Badge>
+                                Submarine *<Badge color="light">{player.ships[1]}</Badge>
                             </Button>
                             <Button onClick={() => selectShip(2)} className="mb-1">
-                                Destroyer **<Badge color="light">{ships[2]}</Badge>
+                                Destroyer **<Badge color="light">{player.ships[2]}</Badge>
                             </Button>
                             <Button onClick={() => selectShip(3)} className="mb-1">
                                 Cruiser ***
-                                <Badge color="light">{ships[3]}</Badge>
+                                <Badge color="light">{player.ships[3]}</Badge>
                             </Button>
                             <Button onClick={() => selectShip(4)} className="mb-1">
-                                Battleship ****<Badge color="light">{ships[4]}</Badge>
+                                Battleship ****<Badge color="light">{player.ships[4]}</Badge>
                             </Button>
                             <Button color="primary" onClick={changeOrientation} className="mb-1">
                                 Rotate
@@ -139,9 +124,8 @@ const mapStateToProps = state => {
         isRegistrationFormOpened,
         isUserSignedIn,
         selectedShipSize,
-        field,
+        player,
         orientation,
-        ships,
     } = state;
 
     return {
@@ -149,9 +133,8 @@ const mapStateToProps = state => {
         isRegistrationFormOpened,
         isUserSignedIn,
         selectedShipSize,
-        field,
+        player,
         orientation,
-        ships,
     };
 };
 
