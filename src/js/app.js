@@ -27,11 +27,6 @@ class App extends Component {
 
     componentDidMount() {}
 
-    handleReset() {
-        this.props.reset();
-        this.forceUpdate();
-    }
-
     render() {
         const {
             mode,
@@ -43,6 +38,7 @@ class App extends Component {
             selectedShipSize,
             orientation,
             setBattlePhase,
+            reset,
         } = this.props;
 
         return mode === LOBBY ? (
@@ -99,11 +95,7 @@ class App extends Component {
                             <Button color="primary" onClick={changeOrientation} className="mb-1">
                                 Rotate
                             </Button>
-                            <Button
-                                color="primary"
-                                className="mb-1"
-                                onClick={() => this.handleReset()}
-                            >
+                            <Button color="primary" className="mb-1" onClick={reset}>
                                 Reset
                             </Button>
                             <Button color="primary" className="mb-1">

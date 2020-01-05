@@ -6,3 +6,5 @@ export * from "./placeShip";
 export * from "./signIn";
 export * from "./setBattlePhase";
 export * from "./reset";
+
+export const SET_RANDOM = "SET_RANDOM";
