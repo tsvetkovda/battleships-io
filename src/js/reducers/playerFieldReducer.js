@@ -1,57 +1,50 @@
-import { generateMatrixArray } from "../utils";
+import { generateField, lockedCells } from "../utils";
 
 import { PLACE_SHIP, HORIZONTAL, VERTICAL, RESET, SET_RANDOM } from "../actions";
 
 import { cloneDeep } from "../utils";
 
 const initialState = {
-    field: generateMatrixArray(10).flat(),
+    field: generateField(10),
     availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
 };
 
 const playerReducer = (state = initialState, action) => {
     switch (action.type) {
-        case PLACE_SHIP:
-            const { position, orientation } = action;
-            let result = cloneDeep(state);
-            let occupiedCells = [];
-            let locked = [
-                { x: 1, y: 0 },
-                { x: -1, y: 0 },
-                { x: 0, y: 1 },
-                { x: 0, y: -1 },
-                { x: 1, y: 1 },
-                { x: -1, y: -1 },
-                { x: -1, y: 1 },
-                { x: 1, y: -1 },
-            ];
+        case PLACE_SHIP: {
+            let newState = cloneDeep(state);
+            const { position, orientation, shipSize } = action;
 
-            for (let i = 0; i < action.size; i++) {
+            let occupiedCells = [];
+
+            for (let i = 0; i < shipSize; i++) {
                 if (orientation === HORIZONTAL) {
-                    let x = result.field.find(
-                        el =>
-                            el.x === position.x + i &&
-                            el.y === position.y &&
-                            !(el.locked || el.hasShip)
+                    let x = newState.field.find(
+                        cell =>
+                            cell.x === position.x + i &&
+                            cell.y === position.y &&
+                            !(cell.locked || cell.hasShip)
                     );
+
                     if (x !== undefined) occupiedCells.push(x);
                 }
 
                 if (orientation === VERTICAL) {
-                    let x = result.field.find(
-                        el =>
-                            el.x === position.x &&
-                            el.y === position.y + i &&
-                            !(el.locked || el.hasShip)
+                    let x = newState.field.find(
+                        cell =>
+                            cell.x === position.x &&
+                            cell.y === position.y + i &&
+                            !(cell.locked || cell.hasShip)
                     );
+
                     if (x !== undefined) occupiedCells.push(x);
                 }
             }
 
-            if (occupiedCells.length === action.size && action.ships[action.size] > 0) {
+            if (occupiedCells.length === shipSize && newState.availableShips[shipSize] > 0) {
                 occupiedCells.forEach(el => {
-                    locked.forEach(lock => {
-                        result.field.forEach(val => {
+                    lockedCells.forEach(lock => {
+                        newState.field.forEach(val => {
                             if (val.x === el.x + lock.x && val.y === el.y + lock.y) {
                                 val.className = "cell-locked";
                                 val.locked = true;
@@ -61,20 +54,29 @@ const playerReducer = (state = initialState, action) => {
                 });
             }
 
-            if (occupiedCells.length === action.size && action.ships[action.size] > 0) {
-                result.field.forEach(el => {
+            if (occupiedCells.length === shipSize && newState.availableShips[shipSize] > 0) {
+                newState.field.forEach(el => {
                     if (occupiedCells.some(cell => cell.x === el.x && cell.y === el.y)) {
                         el.hasShip = true;
                         el.className = "cell-occupied";
                     }
                 });
-                result.availableShips[action.size] -= 1;
+                newState.availableShips[shipSize]--;
             }
 
-            return { field: result.field, availableShips: result.availableShips };
-        case RESET:
+            return {
+                field: newState.field,
+                availableShips: newState.availableShips,
+            };
+        }
+
+        case RESET: {
             return initialState;
-        case SET_RANDOM:
+        }
+
+        case SET_RANDOM: {
+        }
+
         default:
             return state;
     }

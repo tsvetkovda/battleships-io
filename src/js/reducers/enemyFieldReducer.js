@@ -1,12 +1,27 @@
-import { generateMatrixArray } from "../utils";
+import { generateMatrixArray, enemyField, fakeField, cloneDeep } from "../utils";
+import { SHOOT_AT_ENEMY } from "../actions";
 
 const initialState = {
-    field: generateMatrixArray(10).flat(),
-    availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
+    field: fakeField,
 };
 
 const enemyFieldReducer = (state = initialState, action) => {
-    return state;
+    switch (action.type) {
+        case SHOOT_AT_ENEMY:
+            const { position } = action;
+
+            let newField = cloneDeep(state.field);
+
+            let targetCell = newField.find(cell => cell.x === position.x && cell.y === position.y);
+
+            targetCell !== undefined && targetCell.hasShip
+                ? (targetCell.destroyed = true)
+                : (targetCell.missed = true);
+
+            return { field: newField };
+        default:
+            return state;
+    }
 };
 
 export default enemyFieldReducer;

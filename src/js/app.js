@@ -18,6 +18,8 @@ import {
     reset,
     setBattlePhase,
     WARM_UP,
+    shootAtEnemy,
+    setRandom,
 } from "./actions";
 
 class App extends Component {
@@ -28,6 +30,16 @@ class App extends Component {
     componentDidMount() {}
 
     setRandom() {}
+
+    handleEnemyCells(el) {
+        if (el.destroyed) {
+            return "cell-destroyed";
+        } else if (el.missed) {
+            return "cell-missed";
+        } else {
+            return "cell";
+        }
+    }
 
     render() {
         const {
@@ -41,7 +53,9 @@ class App extends Component {
             orientation,
             setBattlePhase,
             reset,
+            setRandom,
             enemy,
+            shootAtEnemy,
         } = this.props;
 
         return mode === LOBBY ? (
@@ -96,32 +110,31 @@ class App extends Component {
                                 Size: 4 <Badge color="light">left:{player.availableShips[4]}</Badge>
                             </Button>
                             <Button color="primary" onClick={changeOrientation} className="mb-1">
-                                Rotate
+                                Rotate <Badge color="light">{orientation}</Badge>
                             </Button>
                             <Button color="primary" className="mb-1" onClick={reset}>
                                 Reset
                             </Button>
-                            <Button
-                                color="primary"
-                                className="mb-1"
-                                onClick={() => {
-                                    this.setRandom();
-                                }}
-                            >
+                            <Button color="primary" className="mb-1" onClick={setRandom}>
                                 Random
                             </Button>
                         </ButtonGroup>
                     </Col>
                     <Col className="col-md-6">
                         <div className="grid d-flex flex-row mb-4">
-                            {enemy.field.map(el => (
+                            {enemy.field.map(cell => (
                                 <div
-                                    className={el.className}
+                                    className={this.handleEnemyCells(cell)}
                                     key={nanoid()}
-                                    data-x={el.x}
-                                    data-y={el.y}
+                                    data-x={cell.x}
+                                    data-y={cell.y}
                                     onMouseOver={() => (event.target.className = "cell-selected")}
-                                    onMouseLeave={() => (event.target.className = el.className)}
+                                    onMouseLeave={() =>
+                                        (event.target.className = this.handleEnemyCells(cell))
+                                    }
+                                    onClick={() =>
+                                        shootAtEnemy({ x: cell.x, y: cell.y }, enemy.field)
+                                    }
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>
                                 </div>
@@ -161,11 +174,13 @@ const mapDispatchToProps = dispatch => {
         selectLobby: () => dispatch(selectGameMode(LOBBY)),
         openRegistrationForm: () => dispatch(toogleRegistration()),
         selectShip: size => dispatch(selectShip(size)),
-        placeShip: (position, size, orientation, ships) =>
-            dispatch(placeShip(position, size, orientation, ships)),
+        placeShip: (position, shipSize, orientation, availableShips) =>
+            dispatch(placeShip(position, shipSize, orientation, availableShips)),
         changeOrientation: () => dispatch(changeOrientation()),
         reset: () => dispatch(reset()),
+        setRandom: () => dispatch(setRandom()),
         setBattlePhase: phase => dispatch(setBattlePhase(phase)),
+        shootAtEnemy: (position, enemyField) => dispatch(shootAtEnemy(position, enemyField)),
     };
 };
 
