@@ -11,6 +11,14 @@ export const generateMatrixArray = size => {
 
 export const cloneDeep = x => JSON.parse(JSON.stringify(x));
 
+export const rndInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+export const generateRandomCell = () => ({ x: rndInt(0, 9), y: rndInt(0, 9) });
+
+export const generateRandomOrientation = () => (rndInt(0, 100) > 50 ? "HORIZONTAL" : "VERTICAL");
+
 export const enemyField = [
     { x: 0, y: 0, hasShip: true, locked: true, className: "cell-occupied" },
     { x: 1, y: 0, hasShip: true, locked: true, className: "cell-occupied" },

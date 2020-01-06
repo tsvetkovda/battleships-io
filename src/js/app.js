@@ -7,7 +7,7 @@ import { Button, Container, Row, Col, ButtonGroup, Badge } from "reactstrap";
 
 import Lobby from "./lobby";
 
-import { enemyField } from "./utils";
+import { enemyField, generateRandomCell, generateRandomOrientation } from "./utils";
 
 import {
     selectGameMode,
@@ -27,6 +27,8 @@ class App extends Component {
 
     componentDidMount() {}
 
+    setRandom() {}
+
     render() {
         const {
             mode,
@@ -39,6 +41,7 @@ class App extends Component {
             orientation,
             setBattlePhase,
             reset,
+            enemy,
         } = this.props;
 
         return mode === LOBBY ? (
@@ -98,14 +101,20 @@ class App extends Component {
                             <Button color="primary" className="mb-1" onClick={reset}>
                                 Reset
                             </Button>
-                            <Button color="primary" className="mb-1">
+                            <Button
+                                color="primary"
+                                className="mb-1"
+                                onClick={() => {
+                                    this.setRandom();
+                                }}
+                            >
                                 Random
                             </Button>
                         </ButtonGroup>
                     </Col>
                     <Col className="col-md-6">
                         <div className="grid d-flex flex-row mb-4">
-                            {enemyField.map(el => (
+                            {enemy.field.map(el => (
                                 <div
                                     className={el.className}
                                     key={nanoid()}
@@ -133,6 +142,7 @@ const mapStateToProps = state => {
         selectedShipSize,
         player,
         orientation,
+        enemy,
     } = state;
 
     return {
@@ -141,6 +151,7 @@ const mapStateToProps = state => {
         isUserSignedIn,
         selectedShipSize,
         player,
+        enemy,
         orientation,
     };
 };

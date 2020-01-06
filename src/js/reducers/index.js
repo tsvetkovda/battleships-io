@@ -7,6 +7,7 @@ import selectShipReducer from "./selectShipReducer";
 import changeOrientationReducer from "./changeOrientationReducer";
 import playerReducer from "./playerFieldReducer";
 import battlePhaseReducer from "./battlePhaseReducer";
+import enemyFieldReducer from "./enemyFieldReducer";
 
 const rootReducer = combineReducers({
     mode: gameModeReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     selectedShipSize: selectShipReducer,
     orientation: changeOrientationReducer,
     player: playerReducer,
+    enemy: enemyFieldReducer,
     phase: battlePhaseReducer,
 });
 
