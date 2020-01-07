@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
+import { Button, Container, Row, Col, ButtonGroup, Badge } from "reactstrap";
+import io from "socket.io-client";
 import nanoid from "nanoid";
 
-import { Button, Container, Row, Col, ButtonGroup, Badge } from "reactstrap";
-
 import Lobby from "./lobby";
-
 import { enemyField, generateRandomCell, generateRandomOrientation } from "./utils";
+
+const socket = io("http://localhost:3000");
 
 import {
     selectGameMode,
@@ -27,7 +27,11 @@ class App extends Component {
         super(props);
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        let username = nanoid();
+
+        socket.emit("addUser", username);
+    }
 
     setRandom() {}
 
