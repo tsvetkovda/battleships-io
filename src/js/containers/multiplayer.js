@@ -18,7 +18,7 @@ import io from "socket.io-client";
 
 import Chat from "./chat";
 
-const socket = io("/");
+// const socket = io("/");
 
 class Multiplayer extends Component {
     constructor(props) {
@@ -26,11 +26,12 @@ class Multiplayer extends Component {
     }
 
     componentDidMount() {
+        const { socket } = this.props;
         socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
     }
 
     handleAllPlayersConnected() {
-        const { setBattlePhase } = this.props;
+        const { setBattlePhase, socket } = this.props;
         setBattlePhase("WARM_UP");
     }
 
@@ -59,6 +60,7 @@ class Multiplayer extends Component {
             enemy,
             shootAtEnemy,
             phase,
+            socket,
         } = this.props;
 
         return (
@@ -150,7 +152,7 @@ class Multiplayer extends Component {
                 </Row>
                 <Row>
                     <Col>
-                        <Chat />
+                        <Chat socket={socket} />
                     </Col>
                 </Row>
             </Container>

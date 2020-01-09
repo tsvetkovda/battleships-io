@@ -1,11 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Input, InputGroup, InputGroupAddon } from "reactstrap";
-import io from "socket.io-client";
 
 import { setMessage } from "../actions";
-
-const socket = io("/");
 
 class Chat extends Component {
     constructor(props) {
@@ -13,6 +10,7 @@ class Chat extends Component {
     }
 
     componentDidMount() {
+        const { socket } = this.props;
         socket.on("chatMsg", this.handleRecieveMessage);
     }
 
@@ -24,7 +22,7 @@ class Chat extends Component {
     }
 
     handleSendMessage() {
-        const { message, setMessageClear, player } = this.props;
+        const { message, setMessageClear, player, socket } = this.props;
 
         socket.emit("chatMsg", message, player.name);
 

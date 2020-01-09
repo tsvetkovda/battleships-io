@@ -1,20 +1,20 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Container, Row, Col, Input, InputGroup } from "reactstrap";
-import io from "socket.io-client";
 
 import { selectGameMode, MULTIPLAYER, setName, setRoomId } from "../actions";
-
-const socket = io("/");
 
 class Lobby extends Component {
     constructor() {
         super();
     }
 
+    componentDidMount() {}
+
     handleGameCreation() {
-        let username = this.props.player.name;
-        let roomId = this.props.player.roomId;
+        const { socket, player } = this.props;
+        let username = player.name;
+        let roomId = player.roomId;
 
         socket.emit("createRoom", { username, roomId });
 
@@ -22,8 +22,10 @@ class Lobby extends Component {
     }
 
     handleJoinGame() {
-        let username = this.props.player.name;
-        let roomId = this.props.player.roomId;
+        const { socket, player } = this.props;
+
+        let username = player.name;
+        let roomId = player.roomId;
 
         socket.emit("joinRoom", { username, roomId });
 
