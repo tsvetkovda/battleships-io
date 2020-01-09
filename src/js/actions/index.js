@@ -8,6 +8,8 @@ export * from "./placeShip";
 export * from "./setBattlePhase";
 export * from "./reset";
 export * from "./setRandom";
+
+export * from "./setEnemyField";
 export * from "./shootAtEnemy";
 
 export * from "./setName";

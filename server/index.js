@@ -12,6 +12,7 @@ app.get("/", function(req, res) {
 });
 
 let createdRooms = [];
+let users = [];
 
 io.on("connection", function(socket) {
     console.log("Socket connected:", socket.id);
@@ -41,6 +42,11 @@ io.on("connection", function(socket) {
         if (room.users.length === 2) {
             setTimeout(() => io.emit("allPlayersConnected"), 5000);
         }
+    });
+
+    socket.on("sendDataToOpponent", data => {
+        console.log(data);
+        socket.broadcast.emit("sendDataToOpponent", data);
     });
 
     socket.on("chatMsg", (msg, username) => {

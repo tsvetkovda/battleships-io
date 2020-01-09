@@ -14,6 +14,7 @@ import {
     WARM_UP,
     shootAtEnemy,
     setRandom,
+    setEnemyField,
 } from "../actions";
 
 import Chat from "./chat";
@@ -26,10 +27,23 @@ class Multiplayer extends Component {
     componentDidMount() {
         const { socket } = this.props;
         socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
+        socket.on("sendDataToOpponent", data => this.handleRecieveOpponentData(data));
+    }
+
+    handleRecieveOpponentData(data) {
+        const { setEnemyField } = this.props;
+        setEnemyField(data);
+        console.log(data);
+    }
+
+    handleSendDataToOpponent() {
+        const { socket, player } = this.props;
+
+        socket.emit("sendDataToOpponent", player.field);
     }
 
     handleAllPlayersConnected() {
-        const { setBattlePhase, socket } = this.props;
+        const { setBattlePhase } = this.props;
         setBattlePhase("WARM_UP");
     }
 
@@ -76,6 +90,9 @@ class Multiplayer extends Component {
                         ) : (
                             <div>Place your ships</div>
                         )}
+                        <Button onClick={() => this.handleSendDataToOpponent()}>
+                            TEST SEND DATA
+                        </Button>
                     </Col>
                 </Row>
                 <Row>
@@ -182,6 +199,7 @@ const mapDispatchToProps = dispatch => {
         setRandom: () => dispatch(setRandom()),
         setBattlePhase: phase => dispatch(setBattlePhase(phase)),
         shootAtEnemy: (position, enemyField) => dispatch(shootAtEnemy(position, enemyField)),
+        setEnemyField: field => dispatch(setEnemyField(field)),
     };
 };
 
