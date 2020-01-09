@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Container, Row, Col, Button, ButtonGroup, Badge } from "reactstrap";
+import nanoid from "nanoid";
+
 import {
     selectGameMode,
     LOBBY,
@@ -13,12 +15,8 @@ import {
     shootAtEnemy,
     setRandom,
 } from "../actions";
-import nanoid from "nanoid";
-import io from "socket.io-client";
 
 import Chat from "./chat";
-
-// const socket = io("/");
 
 class Multiplayer extends Component {
     constructor(props) {
