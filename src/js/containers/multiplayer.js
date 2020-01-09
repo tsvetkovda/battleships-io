@@ -1,14 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button, Container, Row, Col, ButtonGroup, Badge } from "reactstrap";
-import io from "socket.io-client";
-import nanoid from "nanoid";
-
-import Lobby from "./lobby";
-import { enemyField, generateRandomCell, generateRandomOrientation } from "./utils";
-
-const socket = io("http://localhost:3000");
-
+import { Container, Row, Col, Button, ButtonGroup, Badge } from "reactstrap";
 import {
     selectGameMode,
     LOBBY,
@@ -20,20 +12,27 @@ import {
     WARM_UP,
     shootAtEnemy,
     setRandom,
-} from "./actions";
+} from "../actions";
+import nanoid from "nanoid";
+import io from "socket.io-client";
 
-class App extends Component {
+import Chat from "./chat";
+
+const socket = io("/");
+
+class Multiplayer extends Component {
     constructor(props) {
         super(props);
     }
 
     componentDidMount() {
-        let username = nanoid();
-
-        socket.emit("addUser", username);
+        socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
     }
 
-    setRandom() {}
+    handleAllPlayersConnected() {
+        const { setBattlePhase } = this.props;
+        setBattlePhase("WARM_UP");
+    }
 
     handleEnemyCells(el) {
         if (el.destroyed) {
@@ -47,24 +46,22 @@ class App extends Component {
 
     render() {
         const {
-            mode,
-            selectLobby,
             selectShip,
+            selectedShipSize,
+            changeOrientation,
+            orientation,
+            selectLobby,
             placeShip,
             player,
-            changeOrientation,
-            selectedShipSize,
-            orientation,
             setBattlePhase,
             reset,
             setRandom,
             enemy,
             shootAtEnemy,
+            phase,
         } = this.props;
 
-        return mode === LOBBY ? (
-            <Lobby />
-        ) : (
+        return (
             <Container>
                 <Row className="mb-4 mt-2">
                     <Col>
@@ -74,6 +71,11 @@ class App extends Component {
                         <Button onClick={selectLobby} color="link">
                             Back to lobby
                         </Button>
+                        {phase === "WAIT" ? (
+                            <div>Waiting for other player to connect...</div>
+                        ) : (
+                            <div>Place your ships</div>
+                        )}
                     </Col>
                 </Row>
                 <Row>
@@ -146,37 +148,32 @@ class App extends Component {
                         </div>
                     </Col>
                 </Row>
+                <Row>
+                    <Col>
+                        <Chat />
+                    </Col>
+                </Row>
             </Container>
         );
     }
 }
 
 const mapStateToProps = state => {
-    const {
-        mode,
-        isRegistrationFormOpened,
-        isUserSignedIn,
-        selectedShipSize,
-        player,
-        orientation,
-        enemy,
-    } = state;
+    const { mode, selectedShipSize, player, orientation, enemy, phase } = state;
 
     return {
         mode,
-        isRegistrationFormOpened,
-        isUserSignedIn,
         selectedShipSize,
         player,
         enemy,
         orientation,
+        phase,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         selectLobby: () => dispatch(selectGameMode(LOBBY)),
-        openRegistrationForm: () => dispatch(toogleRegistration()),
         selectShip: size => dispatch(selectShip(size)),
         placeShip: (position, shipSize, orientation, availableShips) =>
             dispatch(placeShip(position, shipSize, orientation, availableShips)),
@@ -188,4 +185,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(Multiplayer);

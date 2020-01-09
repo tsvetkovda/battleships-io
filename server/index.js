@@ -11,15 +11,40 @@ app.get("/", function(req, res) {
     res.sendFile(__dirname + "/index.html");
 });
 
+let createdRooms = [];
+
 io.on("connection", function(socket) {
-    console.log("a user connected");
+    console.log("Socket connected:", socket.id);
 
     socket.on("disconnect", function() {
-        console.log("user disconnected");
+        console.log("Socket disconnected:", socket.id);
     });
 
-    socket.on("addUser", username => {
-        console.log("new user is:", username);
+    socket.on("createRoom", ({ username, roomId }) => {
+        socket.join(roomId);
+
+        createdRooms.push({
+            id: roomId,
+            users: [username],
+        });
+    });
+
+    socket.on("joinRoom", ({ username, roomId }) => {
+        room = createdRooms.find(x => x.id === roomId);
+
+        if (room && room.users.length < 2) {
+            socket.join(roomId);
+
+            room.users.push(username);
+        }
+
+        if (room.users.length === 2) {
+            setTimeout(() => io.emit("allPlayersConnected"), 5000);
+        }
+    });
+
+    socket.on("chatMsg", (msg, username) => {
+        io.emit("chatMsg", msg, username);
     });
 });
 

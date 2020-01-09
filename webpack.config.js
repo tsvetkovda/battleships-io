@@ -3,7 +3,7 @@ const autoprefixer = require("autoprefixer");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: "./src/js/index.js",
+    entry: "./src/index.js",
 
     output: {
         filename: "main.js",

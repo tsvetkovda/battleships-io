@@ -18,7 +18,7 @@ const enemyFieldReducer = (state = initialState, action) => {
                 ? (targetCell.destroyed = true)
                 : (targetCell.missed = true);
 
-            return { field: newField };
+            return { ...state, field: newField };
         default:
             return state;
     }

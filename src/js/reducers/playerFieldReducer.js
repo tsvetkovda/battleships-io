@@ -1,12 +1,25 @@
+import generate from "nanoid/generate";
+
 import { generateField, lockedCells } from "../utils";
 
-import { PLACE_SHIP, HORIZONTAL, VERTICAL, RESET, SET_RANDOM } from "../actions";
+import {
+    PLACE_SHIP,
+    HORIZONTAL,
+    VERTICAL,
+    RESET,
+    SET_RANDOM,
+    SET_NAME,
+    SET_ROOM_ID,
+} from "../actions";
 
 import { cloneDeep } from "../utils";
 
 const initialState = {
     field: generateField(10),
     availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
+    name: "",
+    // roomId: generate("0123456789", 5),
+    roomId: 1,
 };
 
 const playerReducer = (state = initialState, action) => {
@@ -65,6 +78,7 @@ const playerReducer = (state = initialState, action) => {
             }
 
             return {
+                ...state,
                 field: newState.field,
                 availableShips: newState.availableShips,
             };
@@ -75,6 +89,20 @@ const playerReducer = (state = initialState, action) => {
         }
 
         case SET_RANDOM: {
+        }
+
+        case SET_NAME: {
+            return {
+                ...state,
+                name: action.name,
+            };
+        }
+
+        case SET_ROOM_ID: {
+            return {
+                ...state,
+                roomId: action.roomId,
+            };
         }
 
         default:
