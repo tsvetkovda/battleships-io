@@ -9,27 +9,30 @@ class Lobby extends Component {
         super();
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        const { socket } = this.props;
+    }
 
     handleGameCreation() {
         const { socket, player } = this.props;
-        let username = player.name;
-        let roomId = player.roomId;
 
-        socket.emit("createRoom", { username, roomId });
+        socket.emit("createRoom", { username: player.name, roomId: player.roomId });
 
-        this.props.selectMultiplayer();
+        socket.on("roomCreation", data => {
+            if (data.canCreate) this.props.selectMultiplayer();
+            else console.log(data.msg);
+        });
     }
 
     handleJoinGame() {
         const { socket, player } = this.props;
 
-        let username = player.name;
-        let roomId = player.roomId;
+        socket.emit("joinRoom", { username: player.name, roomId: player.roomId });
 
-        socket.emit("joinRoom", { username, roomId });
-
-        this.props.selectMultiplayer();
+        socket.on("playerConnection", data => {
+            if (data.canConnect) this.props.selectMultiplayer();
+            else console.log(data.msg);
+        });
     }
 
     render() {

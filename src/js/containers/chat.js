@@ -15,6 +15,7 @@ class Chat extends Component {
     }
 
     handleRecieveMessage(msg, username) {
+        console.log(msg, username);
         if (msg) {
             let div = document.createElement("div");
             document.querySelector(".chat").append(`${username}: ${msg}`, div);

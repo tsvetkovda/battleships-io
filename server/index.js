@@ -12,7 +12,6 @@ app.get("/", function(req, res) {
 });
 
 let createdRooms = [];
-let users = [];
 
 io.on("connection", function(socket) {
     console.log("Socket connected:", socket.id);
@@ -22,24 +21,57 @@ io.on("connection", function(socket) {
     });
 
     socket.on("createRoom", ({ username, roomId }) => {
-        socket.join(roomId);
+        room = createdRooms.find(x => x.id === roomId);
 
-        createdRooms.push({
-            id: roomId,
-            users: [username],
-        });
+        if (!room) {
+            createdRooms.push({
+                id: roomId,
+                users: [username],
+            });
+
+            io.to(`${socket.id}`).emit("roomCreation", {
+                canCreate: true,
+                msg: "Success",
+            });
+
+            socket.join(roomId);
+        }
+
+        if (room) {
+            io.to(`${socket.id}`).emit("roomCreation", {
+                canCreate: false,
+                msg: "Room with this id is already created",
+            });
+        }
     });
 
     socket.on("joinRoom", ({ username, roomId }) => {
         room = createdRooms.find(x => x.id === roomId);
 
-        if (room && room.users.length < 2) {
-            socket.join(roomId);
-
-            room.users.push(username);
+        if (!room) {
+            io.to(`${socket.id}`).emit("playerConnection", {
+                canConnect: false,
+                msg: "Room not found",
+            });
         }
 
-        if (room.users.length === 2) {
+        if (room && room.users.length > 1) {
+            io.to(`${socket.id}`).emit("playerConnection", {
+                canConnect: false,
+                msg: "Room is full",
+            });
+        }
+
+        if (room && room.users.length < 2) {
+            room.users.push(username);
+
+            socket.join(roomId);
+
+            io.to(`${socket.id}`).emit("playerConnection", {
+                canConnect: true,
+                msg: "Success",
+            });
+
             setTimeout(() => io.emit("allPlayersConnected"), 5000);
         }
     });

@@ -27,10 +27,10 @@ class Multiplayer extends Component {
     componentDidMount() {
         const { socket } = this.props;
         socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
-        socket.on("sendDataToOpponent", data => this.handleRecieveOpponentData(data));
+        socket.on("sendDataToOpponent", data => this.handleReceiveOpponentData(data));
     }
 
-    handleRecieveOpponentData(data) {
+    handleReceiveOpponentData(data) {
         const { setEnemyField } = this.props;
         setEnemyField(data);
         console.log(data);
