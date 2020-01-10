@@ -34,6 +34,8 @@ io.on("connection", function(socket) {
                 msg: "Success",
             });
 
+            console.log(createdRooms);
+
             socket.join(roomId);
         }
 
@@ -72,13 +74,20 @@ io.on("connection", function(socket) {
                 msg: "Success",
             });
 
-            setTimeout(() => io.emit("allPlayersConnected"), 5000);
+            console.log(createdRooms);
+
+            setTimeout(() => io.emit("allPlayersConnected"), 1500);
         }
     });
 
     socket.on("sendDataToOpponent", data => {
         console.log(data);
         socket.broadcast.emit("sendDataToOpponent", data);
+    });
+
+    socket.on("sendShot", data => {
+        console.log(data);
+        socket.broadcast.emit("sendShot", data);
     });
 
     socket.on("chatMsg", (msg, username) => {

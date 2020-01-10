@@ -1,23 +1,20 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Container, Row, Col, Button, ButtonGroup, Badge } from "reactstrap";
+import { Container, Row, Col, Button } from "reactstrap";
 import nanoid from "nanoid";
 
 import {
     selectGameMode,
     LOBBY,
-    selectShip,
     placeShip,
-    changeOrientation,
-    reset,
     setBattlePhase,
     WARM_UP,
-    shootAtEnemy,
-    setRandom,
     setEnemyField,
+    receiveShot,
 } from "../actions";
 
 import Chat from "./chat";
+import Controls from "./controls";
 
 class Multiplayer extends Component {
     constructor(props) {
@@ -28,12 +25,25 @@ class Multiplayer extends Component {
         const { socket } = this.props;
         socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
         socket.on("sendDataToOpponent", data => this.handleReceiveOpponentData(data));
+        socket.on("sendShot", data => this.handleReceiveShot(data));
+    }
+
+    handleSendShot(cell) {
+        const { socket } = this.props;
+
+        socket.emit("sendShot", cell);
+    }
+
+    handleReceiveShot(data) {
+        const { receiveShot } = this.props;
+
+        receiveShot(data);
     }
 
     handleReceiveOpponentData(data) {
         const { setEnemyField } = this.props;
+
         setEnemyField(data);
-        console.log(data);
     }
 
     handleSendDataToOpponent() {
@@ -47,10 +57,10 @@ class Multiplayer extends Component {
         setBattlePhase("WARM_UP");
     }
 
-    handleEnemyCells(el) {
-        if (el.destroyed) {
+    handleEnemyCells(cell) {
+        if (cell.destroyed) {
             return "cell-destroyed";
-        } else if (el.missed) {
+        } else if (cell.missed) {
             return "cell-missed";
         } else {
             return "cell";
@@ -59,18 +69,13 @@ class Multiplayer extends Component {
 
     render() {
         const {
-            selectShip,
             selectedShipSize,
-            changeOrientation,
             orientation,
             selectLobby,
             placeShip,
             player,
             setBattlePhase,
-            reset,
-            setRandom,
             enemy,
-            shootAtEnemy,
             phase,
             socket,
         } = this.props;
@@ -119,29 +124,7 @@ class Multiplayer extends Component {
                                 </div>
                             ))}
                         </div>
-                        <ButtonGroup size="sm" className="mw-100">
-                            <Button onClick={() => selectShip(1)} className="mb-1">
-                                Size: 1 <Badge color="light">left:{player.availableShips[1]}</Badge>
-                            </Button>
-                            <Button onClick={() => selectShip(2)} className="mb-1">
-                                Size: 2 <Badge color="light">left:{player.availableShips[2]}</Badge>
-                            </Button>
-                            <Button onClick={() => selectShip(3)} className="mb-1">
-                                Size: 3 <Badge color="light">left:{player.availableShips[3]}</Badge>
-                            </Button>
-                            <Button onClick={() => selectShip(4)} className="mb-1">
-                                Size: 4 <Badge color="light">left:{player.availableShips[4]}</Badge>
-                            </Button>
-                            <Button color="primary" onClick={changeOrientation} className="mb-1">
-                                Rotate <Badge color="light">{orientation}</Badge>
-                            </Button>
-                            <Button color="primary" className="mb-1" onClick={reset}>
-                                Reset
-                            </Button>
-                            <Button color="primary" className="mb-1" onClick={setRandom}>
-                                Random
-                            </Button>
-                        </ButtonGroup>
+                        <Controls />
                     </Col>
                     <Col className="col-md-6">
                         <div className="grid d-flex flex-row mb-4">
@@ -155,9 +138,7 @@ class Multiplayer extends Component {
                                     onMouseLeave={() =>
                                         (event.target.className = this.handleEnemyCells(cell))
                                     }
-                                    onClick={() =>
-                                        shootAtEnemy({ x: cell.x, y: cell.y }, enemy.field)
-                                    }
+                                    onClick={() => this.handleSendShot({ x: cell.x, y: cell.y })}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>
                                 </div>
@@ -191,15 +172,12 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         selectLobby: () => dispatch(selectGameMode(LOBBY)),
-        selectShip: size => dispatch(selectShip(size)),
         placeShip: (position, shipSize, orientation, availableShips) =>
             dispatch(placeShip(position, shipSize, orientation, availableShips)),
-        changeOrientation: () => dispatch(changeOrientation()),
-        reset: () => dispatch(reset()),
-        setRandom: () => dispatch(setRandom()),
         setBattlePhase: phase => dispatch(setBattlePhase(phase)),
         shootAtEnemy: (position, enemyField) => dispatch(shootAtEnemy(position, enemyField)),
         setEnemyField: field => dispatch(setEnemyField(field)),
+        receiveShot: position => dispatch(receiveShot(position)),
     };
 };
 

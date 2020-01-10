@@ -10,6 +10,7 @@ import {
     SET_RANDOM,
     SET_NAME,
     SET_ROOM_ID,
+    RECEIVE_SHOT,
 } from "../actions";
 
 import { cloneDeep } from "../utils";
@@ -25,9 +26,9 @@ const initialState = {
 const playerReducer = (state = initialState, action) => {
     switch (action.type) {
         case PLACE_SHIP: {
-            let newState = cloneDeep(state);
             const { position, orientation, shipSize } = action;
 
+            let newState = cloneDeep(state);
             let occupiedCells = [];
 
             for (let i = 0; i < shipSize; i++) {
@@ -82,6 +83,23 @@ const playerReducer = (state = initialState, action) => {
                 field: newState.field,
                 availableShips: newState.availableShips,
             };
+        }
+
+        case RECEIVE_SHOT: {
+            const { position } = action;
+
+            let newField = cloneDeep(state.field);
+            let targetCell = newField.find(cell => cell.x === position.x && cell.y === position.y);
+
+            if (targetCell && targetCell.hasShip) {
+                targetCell.destroyed = true;
+                targetCell.className = "cell-destroyed";
+            } else {
+                targetCell.missed = true;
+                targetCell.className = "cell-missed";
+            }
+
+            return { ...state, field: newField };
         }
 
         case RESET: {
