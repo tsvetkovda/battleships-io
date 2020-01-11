@@ -40,8 +40,8 @@ class Lobby extends Component {
 
         return (
             <Container>
-                <Row>
-                    <Col className="text-center">
+                <Row className="text-center">
+                    <Col>
                         <h1>Battleships</h1>
                         <p>A classic strategy game for two players.</p>
                     </Col>

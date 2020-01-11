@@ -11,6 +11,7 @@ import {
     SET_NAME,
     SET_ROOM_ID,
     RECEIVE_SHOT,
+    SET_READY,
 } from "../actions";
 
 import { cloneDeep } from "../utils";
@@ -20,7 +21,7 @@ const initialState = {
     availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
     name: "",
     // roomId: generate("0123456789", 5),
-    roomId: 1,
+    roomId: "1",
 };
 
 const playerReducer = (state = initialState, action) => {

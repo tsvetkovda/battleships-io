@@ -11,21 +11,20 @@ class Chat extends Component {
 
     componentDidMount() {
         const { socket } = this.props;
-        socket.on("chatMsg", this.handleReceiveMessage);
+        socket.on("chatMsg", data => this.handleReceiveMessage(data));
     }
 
-    handleReceiveMessage(msg, username) {
-        console.log(msg, username);
-        if (msg) {
+    handleReceiveMessage(data) {
+        if (data) {
             let div = document.createElement("div");
-            document.querySelector(".chat").append(`${username}: ${msg}`, div);
+            document.querySelector(".chat").append(`${data.username}: ${data.msg}`, div);
         }
     }
 
     handleSendMessage() {
         const { message, setMessageClear, player, socket } = this.props;
 
-        socket.emit("chatMsg", message, player.name);
+        socket.emit("chatMsg", { username: player.name, msg: message });
 
         setMessageClear();
     }

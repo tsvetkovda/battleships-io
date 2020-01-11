@@ -1,5 +1,8 @@
 @import "~bootstrap/scss/bootstrap";
 
+$blue: #007bff;
+$red: #dc3545;
+
 .grid {
     flex-flow: wrap;
     flex-direction: column;
@@ -12,6 +15,8 @@
         z-index: -1;
         width: 100%;
         border: solid 1px rgba(0, 0, 0, 0.125);
+        background: url("../assets/img/aspect-ratio.png") 50% 50% no-repeat;
+        background-size: contain;
     }
 }
 
@@ -39,7 +44,7 @@
 .cell-occupied {
     flex-grow: 1;
     width: 10%;
-    background: lightsteelblue;
+    background: #007bff;
     img {
         z-index: -1;
         width: 100%;
@@ -50,21 +55,24 @@
 .cell-destroyed {
     flex-grow: 1;
     width: 10%;
-    background: lightcoral;
+    background-color: $blue;
     img {
         z-index: -1;
         width: 100%;
         border: solid 1px rgba(0, 0, 0, 0.25);
+        background: url("../assets/img/cross.png") 50% 50% no-repeat;
+        background-size: contain;
     }
 }
 
 .cell-missed {
     flex-grow: 1;
     width: 10%;
-    background: lightslategray;
     img {
         z-index: -1;
         width: 100%;
         border: solid 1px rgba(0, 0, 0, 0.25);
+        background: url("../assets/img/dot.png") 50% 50% no-repeat;
+        background-size: contain;
     }
 }

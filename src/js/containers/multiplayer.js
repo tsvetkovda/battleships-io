@@ -11,6 +11,7 @@ import {
     WARM_UP,
     setEnemyField,
     receiveShot,
+    shootAtEnemy,
 } from "../actions";
 
 import Chat from "./chat";
@@ -28,6 +29,14 @@ class Multiplayer extends Component {
         socket.on("sendShot", data => this.handleReceiveShot(data));
     }
 
+    handlePlayerLeft() {
+        const { socket, selectLobby, player } = this.props;
+
+        socket.emit("playerLeft", { username: player.name, roomId: player.roomId });
+
+        selectLobby();
+    }
+
     handleSendShot(cell) {
         const { socket } = this.props;
 
@@ -38,6 +47,8 @@ class Multiplayer extends Component {
         const { receiveShot } = this.props;
 
         receiveShot(data);
+
+        this.handleSendDataToOpponent();
     }
 
     handleReceiveOpponentData(data) {
@@ -54,6 +65,7 @@ class Multiplayer extends Component {
 
     handleAllPlayersConnected() {
         const { setBattlePhase } = this.props;
+
         setBattlePhase("WARM_UP");
     }
 
@@ -74,7 +86,6 @@ class Multiplayer extends Component {
             selectLobby,
             placeShip,
             player,
-            setBattlePhase,
             enemy,
             phase,
             socket,
@@ -84,29 +95,30 @@ class Multiplayer extends Component {
             <Container>
                 <Row className="mb-4 mt-2">
                     <Col>
-                        <Button color="primary" onClick={() => setBattlePhase(WARM_UP)}>
-                            Start game
-                        </Button>
-                        <Button onClick={selectLobby} color="link">
+                        <Button onClick={() => this.handlePlayerLeft()} color="primary">
                             Back to lobby
-                        </Button>
-                        {phase === "WAIT" ? (
-                            <div>Waiting for other player to connect...</div>
-                        ) : (
-                            <div>Place your ships</div>
-                        )}
+                        </Button>{" "}
                         <Button onClick={() => this.handleSendDataToOpponent()}>
                             TEST SEND DATA
                         </Button>
                     </Col>
                 </Row>
-                <Row>
+                <Row className="text-center mb-4">
+                    <Col>
+                        {phase === "WAIT" ? (
+                            <h3>Waiting for other player to connect</h3>
+                        ) : (
+                            <h3>Place your ships and hit "Ready"</h3>
+                        )}
+                    </Col>
+                </Row>
+                <Row className="mb-4">
                     <Col className="col-md-6">
-                        <div className="grid d-flex flex-row mb-4">
+                        <div className="grid d-flex flex-row">
                             {player.field.map(el => (
                                 <div
                                     className={el.className}
-                                    key={nanoid()}
+                                    key={`k${nanoid()}`}
                                     data-x={el.x}
                                     data-y={el.y}
                                     onClick={() =>
@@ -124,14 +136,14 @@ class Multiplayer extends Component {
                                 </div>
                             ))}
                         </div>
-                        <Controls />
+                        {phase === WARM_UP ? <Controls /> : null}
                     </Col>
                     <Col className="col-md-6">
-                        <div className="grid d-flex flex-row mb-4">
+                        <div className="grid d-flex flex-row">
                             {enemy.field.map(cell => (
                                 <div
                                     className={this.handleEnemyCells(cell)}
-                                    key={nanoid()}
+                                    key={`k${nanoid()}`}
                                     data-x={cell.x}
                                     data-y={cell.y}
                                     onMouseOver={() => (event.target.className = "cell-selected")}
