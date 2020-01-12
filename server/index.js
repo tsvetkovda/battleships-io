@@ -53,9 +53,6 @@ io.on("connection", function(socket) {
                 msg: "Success",
             });
 
-            console.log(createdRooms);
-            console.log(users);
-
             socket.join(roomId);
         }
     });
@@ -101,28 +98,28 @@ io.on("connection", function(socket) {
             console.log(createdRooms);
 
             setTimeout(() => io.emit("allPlayersConnected"), 1500);
+
+            let firstPlayer = room.users[defineFirstTurn()];
+
+            console.log(firstPlayer);
+
+            setTimeout(() => io.emit("defineFirstTurn", firstPlayer), 1500);
         }
     });
 
     socket.on("playerLeft", data => {
-        console.log(data);
-        console.log(socket.rooms);
-        socket.leave("1");
-        console.log(socket.rooms);
+        socket.leave(data.roomId);
     });
 
     socket.on("sendDataToOpponent", data => {
-        console.log(data);
         socket.broadcast.emit("sendDataToOpponent", data);
     });
 
     socket.on("sendShot", data => {
-        console.log(data);
         socket.broadcast.emit("sendShot", data);
     });
 
     socket.on("chatMsg", data => {
-        console.log(data);
         io.emit("chatMsg", data);
     });
 });
@@ -130,3 +127,7 @@ io.on("connection", function(socket) {
 server.listen(port, () => {
     console.log("Server listening at port:", port);
 });
+
+function defineFirstTurn() {
+    return Math.round(Math.random());
+}

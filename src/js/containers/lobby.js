@@ -49,18 +49,20 @@ class Lobby extends Component {
                 <hr />
                 <Row className="mb-4">
                     <Col className="text-center">
-                        <h3>Your name:</h3>
-                        <InputGroup size="lg">
+                        <h4>Your name:</h4>
+                        <InputGroup size="lg" className="mb-4">
                             <Input
                                 onChange={() => setName(event.target.value)}
                                 value={player.name}
+                                className="text-center"
                             />
                         </InputGroup>
-                        <h3>Room id:</h3>
-                        <InputGroup size="lg">
+                        <h4>Room id:</h4>
+                        <InputGroup size="lg" className="mb-4">
                             <Input
                                 defaultValue={player.roomId}
                                 onChange={() => setRoomId(event.target.value)}
+                                className="text-center"
                             />
                         </InputGroup>
                     </Col>

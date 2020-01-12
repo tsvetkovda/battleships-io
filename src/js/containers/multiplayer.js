@@ -12,6 +12,7 @@ import {
     setEnemyField,
     receiveShot,
     shootAtEnemy,
+    canPlayerShoot,
 } from "../actions";
 
 import Chat from "./chat";
@@ -27,6 +28,7 @@ class Multiplayer extends Component {
         socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
         socket.on("sendDataToOpponent", data => this.handleReceiveOpponentData(data));
         socket.on("sendShot", data => this.handleReceiveShot(data));
+        socket.on("defineFirstTurn", name => this.handleDefineFirstTurn(name));
     }
 
     handlePlayerLeft() {
@@ -37,18 +39,32 @@ class Multiplayer extends Component {
         selectLobby();
     }
 
-    handleSendShot(cell) {
-        const { socket } = this.props;
+    handleDefineFirstTurn(name) {
+        const { player, canPlayerShoot } = this.props;
+        console.log(name);
 
-        socket.emit("sendShot", cell);
+        if (player.name === name) {
+            canPlayerShoot(true);
+        }
+    }
+
+    handleSendShot(cell) {
+        const { socket, player, canPlayerShoot } = this.props;
+
+        if (player.canShoot) {
+            socket.emit("sendShot", cell);
+            canPlayerShoot(false);
+        }
     }
 
     handleReceiveShot(data) {
-        const { receiveShot } = this.props;
+        const { receiveShot, canPlayerShoot } = this.props;
 
         receiveShot(data);
 
         this.handleSendDataToOpponent();
+
+        canPlayerShoot(true);
     }
 
     handleReceiveOpponentData(data) {
@@ -106,9 +122,9 @@ class Multiplayer extends Component {
                 <Row className="text-center mb-4">
                     <Col>
                         {phase === "WAIT" ? (
-                            <h3>Waiting for other player to connect</h3>
+                            <h4>Waiting for other player to connect</h4>
                         ) : (
-                            <h3>Place your ships and hit "Ready"</h3>
+                            <h4>Place your ships and hit "Ready"</h4>
                         )}
                     </Col>
                 </Row>
@@ -190,6 +206,7 @@ const mapDispatchToProps = dispatch => {
         shootAtEnemy: (position, enemyField) => dispatch(shootAtEnemy(position, enemyField)),
         setEnemyField: field => dispatch(setEnemyField(field)),
         receiveShot: position => dispatch(receiveShot(position)),
+        canPlayerShoot: bool => dispatch(canPlayerShoot(bool)),
     };
 };
 

@@ -12,6 +12,7 @@ import {
     SET_ROOM_ID,
     RECEIVE_SHOT,
     SET_READY,
+    CAN_PLAYER_SHOOT,
 } from "../actions";
 
 import { cloneDeep } from "../utils";
@@ -22,6 +23,7 @@ const initialState = {
     name: "",
     // roomId: generate("0123456789", 5),
     roomId: "1",
+    canShoot: false,
 };
 
 const playerReducer = (state = initialState, action) => {
@@ -121,6 +123,13 @@ const playerReducer = (state = initialState, action) => {
             return {
                 ...state,
                 roomId: action.roomId,
+            };
+        }
+
+        case CAN_PLAYER_SHOOT: {
+            return {
+                ...state,
+                canShoot: action.bool,
             };
         }
 

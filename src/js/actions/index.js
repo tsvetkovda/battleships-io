@@ -9,6 +9,7 @@ export * from "./setBattlePhase";
 export * from "./reset";
 export * from "./setRandom";
 export * from "./recieveShoot";
+export * from "./canPlayerShoot";
 
 export * from "./setEnemyField";
 export * from "./shootAtEnemy";
