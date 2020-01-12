@@ -10,6 +10,7 @@ export * from "./reset";
 export * from "./setRandom";
 export * from "./recieveShoot";
 export * from "./canPlayerShoot";
+export * from "./timer";
 
 export * from "./setEnemyField";
 export * from "./shootAtEnemy";

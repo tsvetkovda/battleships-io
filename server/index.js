@@ -53,6 +53,8 @@ io.on("connection", function(socket) {
                 msg: "Success",
             });
 
+            io.emit("chatMsg", { username: "INFO", msg: `Room ${roomId} created!` });
+
             socket.join(roomId);
         }
     });
@@ -95,13 +97,16 @@ io.on("connection", function(socket) {
                 msg: "Success",
             });
 
-            console.log(createdRooms);
+            socket.broadcast.emit("chatMsg", {
+                username: "INFO",
+                msg: `User ${username} connected!`,
+            });
 
-            setTimeout(() => io.emit("allPlayersConnected"), 1500);
+            console.log(createdRooms);
 
             let firstPlayer = room.users[defineFirstTurn()];
 
-            console.log(firstPlayer);
+            setTimeout(() => io.emit("allPlayersConnected"), 1500);
 
             setTimeout(() => io.emit("defineFirstTurn", firstPlayer), 1500);
         }

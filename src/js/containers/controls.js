@@ -13,7 +13,7 @@ class Controls extends Component {
         const { player, reset, setRandom, orientation, changeOrientation, selectShip } = this.props;
 
         return (
-            <div className="controls mb-4">
+            <div className="controls mt-4">
                 <ButtonToggle onClick={() => selectShip(1)} className="mb-1">
                     Size: 1 <Badge color="light">left:{player.availableShips[1]}</Badge>
                 </ButtonToggle>{" "}

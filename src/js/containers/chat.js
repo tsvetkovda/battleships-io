@@ -33,14 +33,15 @@ class Chat extends Component {
         const { message, setMessage } = this.props;
 
         return (
-            <div className="chat">
+            <>
+                <div className="chat"></div>
                 <InputGroup>
                     <Input onChange={() => setMessage(event.target.value)} value={message} />
                     <InputGroupAddon addonType="append">
                         <Button onClick={() => this.handleSendMessage()}>Send</Button>
                     </InputGroupAddon>
                 </InputGroup>
-            </div>
+            </>
         );
     }
 }

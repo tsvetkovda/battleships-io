@@ -13,10 +13,13 @@ import {
     receiveShot,
     shootAtEnemy,
     canPlayerShoot,
+    BATTLE,
+    WAIT,
 } from "../actions";
 
 import Chat from "./chat";
 import Controls from "./controls";
+import Timer from "./timer";
 
 class Multiplayer extends Component {
     constructor(props) {
@@ -41,7 +44,6 @@ class Multiplayer extends Component {
 
     handleDefineFirstTurn(name) {
         const { player, canPlayerShoot } = this.props;
-        console.log(name);
 
         if (player.name === name) {
             canPlayerShoot(true);
@@ -49,9 +51,9 @@ class Multiplayer extends Component {
     }
 
     handleSendShot(cell) {
-        const { socket, player, canPlayerShoot } = this.props;
+        const { socket, phase, player, canPlayerShoot } = this.props;
 
-        if (player.canShoot) {
+        if (player.canShoot && phase === BATTLE) {
             socket.emit("sendShot", cell);
             canPlayerShoot(false);
         }
@@ -107,6 +109,21 @@ class Multiplayer extends Component {
             socket,
         } = this.props;
 
+        let Header;
+
+        if (phase === WAIT) {
+            Header = <h4>Waiting for other player to connect</h4>;
+        } else if (phase === WARM_UP) {
+            Header = (
+                <>
+                    <h4>Place your ships</h4>
+                    <Timer socket={socket} />
+                </>
+            );
+        } else if (phase === BATTLE) {
+            Header = <h4>{player.canShoot ? "You turn" : "Enemy turn"}</h4>;
+        }
+
         return (
             <Container>
                 <Row className="mb-4 mt-2">
@@ -120,17 +137,11 @@ class Multiplayer extends Component {
                     </Col>
                 </Row>
                 <Row className="text-center mb-4">
-                    <Col>
-                        {phase === "WAIT" ? (
-                            <h4>Waiting for other player to connect</h4>
-                        ) : (
-                            <h4>Place your ships and hit "Ready"</h4>
-                        )}
-                    </Col>
+                    <Col>{Header}</Col>
                 </Row>
                 <Row className="mb-4">
                     <Col className="col-md-6">
-                        <div className="grid d-flex flex-row">
+                        <div className="grid d-flex flex-row mb-4">
                             {player.field.map(el => (
                                 <div
                                     className={el.className}
@@ -145,8 +156,8 @@ class Multiplayer extends Component {
                                             player.availableShips
                                         )
                                     }
-                                    onMouseOver={() => (event.target.className = "cell-selected")}
-                                    onMouseLeave={() => (event.target.className = el.className)}
+                                    // onMouseOver={() => (event.target.className = "cell-selected")}
+                                    // onMouseLeave={() => (event.target.className = el.className)}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>
                                 </div>
@@ -162,10 +173,10 @@ class Multiplayer extends Component {
                                     key={`k${nanoid()}`}
                                     data-x={cell.x}
                                     data-y={cell.y}
-                                    onMouseOver={() => (event.target.className = "cell-selected")}
-                                    onMouseLeave={() =>
-                                        (event.target.className = this.handleEnemyCells(cell))
-                                    }
+                                    // onMouseOver={() => (event.target.className = "cell-selected")}
+                                    // onMouseLeave={() =>
+                                    //     (event.target.className = this.handleEnemyCells(cell))
+                                    // }
                                     onClick={() => this.handleSendShot({ x: cell.x, y: cell.y })}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>
