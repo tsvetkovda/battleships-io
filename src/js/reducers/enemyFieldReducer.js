@@ -1,4 +1,4 @@
-import { enemyField, fakeField, cloneDeep, generateField } from "../utils";
+import { cloneDeep, generateField } from "../utils";
 import { SHOOT_AT_ENEMY, SET_ENEMY_FIELD } from "../actions";
 
 const initialState = {

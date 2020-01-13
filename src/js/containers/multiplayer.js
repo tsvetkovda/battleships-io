@@ -89,7 +89,7 @@ class Multiplayer extends Component {
 
     handleEnemyCells(cell) {
         if (cell.destroyed) {
-            return "cell-destroyed";
+            return "enemy-cell__destroyed";
         } else if (cell.missed) {
             return "cell-missed";
         } else {
@@ -144,9 +144,6 @@ class Multiplayer extends Component {
                     <Col>
                         <Button onClick={() => this.handlePlayerLeft()} color="primary">
                             Back to lobby
-                        </Button>{" "}
-                        <Button onClick={() => this.handleSendDataToOpponent()}>
-                            TEST SEND DATA
                         </Button>
                     </Col>
                 </Row>
@@ -170,8 +167,8 @@ class Multiplayer extends Component {
                                             player.availableShips
                                         )
                                     }
-                                    // onMouseOver={() => (event.target.className = "cell-selected")}
-                                    // onMouseLeave={() => (event.target.className = el.className)}
+                                    onMouseOver={() => (event.target.className = "cell-selected")}
+                                    onMouseLeave={() => (event.target.className = el.className)}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>
                                 </div>
@@ -187,10 +184,10 @@ class Multiplayer extends Component {
                                     key={`k${nanoid()}`}
                                     data-x={cell.x}
                                     data-y={cell.y}
-                                    // onMouseOver={() => (event.target.className = "cell-selected")}
-                                    // onMouseLeave={() =>
-                                    //     (event.target.className = this.handleEnemyCells(cell))
-                                    // }
+                                    onMouseOver={() => (event.target.className = "cell-selected")}
+                                    onMouseLeave={() =>
+                                        (event.target.className = this.handleEnemyCells(cell))
+                                    }
                                     onClick={() => this.handleSendShot({ x: cell.x, y: cell.y })}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>

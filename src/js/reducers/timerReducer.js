@@ -1,6 +1,6 @@
 import { DECREMENT } from "../actions";
 
-const timerReducer = (state = 5, action) => {
+const timerReducer = (state = 45, action) => {
     switch (action.type) {
         case DECREMENT:
             return state - 1;
