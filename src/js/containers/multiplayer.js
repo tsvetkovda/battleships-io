@@ -113,15 +113,29 @@ class Multiplayer extends Component {
 
         if (phase === WAIT) {
             Header = <h4>Waiting for other player to connect</h4>;
-        } else if (phase === WARM_UP) {
+        }
+
+        if (phase === WARM_UP) {
             Header = (
                 <>
                     <h4>Place your ships</h4>
                     <Timer socket={socket} />
                 </>
             );
-        } else if (phase === BATTLE) {
+        }
+
+        if (phase === BATTLE) {
             Header = <h4>{player.canShoot ? "You turn" : "Enemy turn"}</h4>;
+            let playerRemainingShips = player.field.filter(x => x.hasShip && !x.destroyed).length;
+            let enemyRemainingShips = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
+
+            if (enemyRemainingShips < 1) {
+                Header = <h4>You win!</h4>;
+            }
+
+            if (playerRemainingShips < 1) {
+                Header = <h4>You lose!</h4>;
+            }
         }
 
         return (
