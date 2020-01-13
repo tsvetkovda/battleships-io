@@ -43,7 +43,7 @@ class Lobby extends Component {
                 <Row className="logo text-center">
                     <Col>
                         <h1 className="logo-text">Battleships</h1>
-                        <p className="logo-description">A classic strategy game for two players.</p>
+                        <p className="logo-description">Classic strategy game for two players</p>
                     </Col>
                 </Row>
                 <hr />

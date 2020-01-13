@@ -1,7 +1,7 @@
 {
-    "name": "battleships",
+    "name": "battleships-io",
     "version": "1.0.0",
-    "description": "",
+    "description": "Classic strategy game for two players",
     "main": "index.js",
     "scripts": {
         "start": "node server/index.js",
@@ -13,14 +13,17 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/tsvetkovda/battleships.git"
+        "url": "git+https://github.com/tsvetkovda/battleships-io.git"
     },
-    "author": "",
+    "author": "Tsvetkov Dmitry",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/tsvetkovda/battleships/issues"
+        "url": "https://github.com/tsvetkovda/battleships-io/issues"
     },
-    "homepage": "https://github.com/tsvetkovda/battleships#readme",
+    "homepage": "https://github.com/tsvetkovda/battleships-io#readme",
+    "engines": {
+        "node": "13.x"
+    },
     "dependencies": {
         "bootstrap": "^4.4.1",
         "express": "^4.17.1",
