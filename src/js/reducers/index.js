@@ -8,6 +8,8 @@ import changeOrientationReducer from "./changeOrientationReducer";
 import playerReducer from "./playerFieldReducer";
 import battlePhaseReducer from "./battlePhaseReducer";
 import enemyFieldReducer from "./enemyFieldReducer";
+import messageReducer from "./messageReducer";
+import timerReducer from "./timerReducer";
 
 const rootReducer = combineReducers({
     mode: gameModeReducer,
@@ -18,6 +20,8 @@ const rootReducer = combineReducers({
     player: playerReducer,
     enemy: enemyFieldReducer,
     phase: battlePhaseReducer,
+    message: messageReducer,
+    timer: timerReducer,
 });
 
 export default rootReducer;

@@ -1,20 +1,35 @@
+import generate from "nanoid/generate";
+
 import { generateField, lockedCells } from "../utils";
 
-import { PLACE_SHIP, HORIZONTAL, VERTICAL, RESET, SET_RANDOM } from "../actions";
+import {
+    PLACE_SHIP,
+    HORIZONTAL,
+    VERTICAL,
+    RESET,
+    SET_RANDOM,
+    SET_NAME,
+    SET_ROOM_ID,
+    RECEIVE_SHOT,
+    CAN_PLAYER_SHOOT,
+} from "../actions";
 
 import { cloneDeep } from "../utils";
 
 const initialState = {
     field: generateField(10),
     availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
+    name: "",
+    roomId: generate("0123456789", 5),
+    canShoot: false,
 };
 
 const playerReducer = (state = initialState, action) => {
     switch (action.type) {
         case PLACE_SHIP: {
-            let newState = cloneDeep(state);
             const { position, orientation, shipSize } = action;
 
+            let newState = cloneDeep(state);
             let occupiedCells = [];
 
             for (let i = 0; i < shipSize; i++) {
@@ -65,9 +80,27 @@ const playerReducer = (state = initialState, action) => {
             }
 
             return {
+                ...state,
                 field: newState.field,
                 availableShips: newState.availableShips,
             };
+        }
+
+        case RECEIVE_SHOT: {
+            const { position } = action;
+
+            let newField = cloneDeep(state.field);
+            let targetCell = newField.find(cell => cell.x === position.x && cell.y === position.y);
+
+            if (targetCell && targetCell.hasShip) {
+                targetCell.destroyed = true;
+                targetCell.className = "cell-destroyed";
+            } else {
+                targetCell.missed = true;
+                targetCell.className = "cell-missed";
+            }
+
+            return { ...state, field: newField };
         }
 
         case RESET: {
@@ -75,6 +108,27 @@ const playerReducer = (state = initialState, action) => {
         }
 
         case SET_RANDOM: {
+        }
+
+        case SET_NAME: {
+            return {
+                ...state,
+                name: action.name,
+            };
+        }
+
+        case SET_ROOM_ID: {
+            return {
+                ...state,
+                roomId: action.roomId,
+            };
+        }
+
+        case CAN_PLAYER_SHOOT: {
+            return {
+                ...state,
+                canShoot: action.bool,
+            };
         }
 
         default:

@@ -6,6 +6,8 @@ const battlePhaseReducer = (state = WAIT, action) => {
             return WAIT;
         case WARM_UP:
             return WARM_UP;
+        case BATTLE:
+            return BATTLE;
         default:
             return state;
     }
