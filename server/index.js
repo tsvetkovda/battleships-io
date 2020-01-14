@@ -114,6 +114,11 @@ io.on("connection", function(socket) {
 
     socket.on("playerLeft", data => {
         socket.leave(data.roomId);
+
+        socket.broadcast.emit("chatMsg", {
+            username: "INFO",
+            msg: `User ${username} left!`,
+        });
     });
 
     socket.on("sendDataToOpponent", data => {
@@ -133,6 +138,4 @@ server.listen(port, () => {
     console.log("Server listening at port:", port);
 });
 
-function defineFirstTurn() {
-    return Math.round(Math.random());
-}
+const defineFirstTurn = () => Math.round(Math.random());

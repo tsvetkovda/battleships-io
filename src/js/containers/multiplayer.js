@@ -5,16 +5,16 @@ import nanoid from "nanoid";
 
 import {
     selectGameMode,
-    LOBBY,
-    placeShip,
     setBattlePhase,
+    LOBBY,
+    WAIT,
     WARM_UP,
+    BATTLE,
+    placeShip,
     setEnemyField,
+    canPlayerShoot,
     receiveShot,
     shootAtEnemy,
-    canPlayerShoot,
-    BATTLE,
-    WAIT,
 } from "../actions";
 
 import Chat from "./chat";
@@ -28,10 +28,22 @@ class Multiplayer extends Component {
 
     componentDidMount() {
         const { socket } = this.props;
+
         socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
         socket.on("sendDataToOpponent", data => this.handleReceiveOpponentData(data));
         socket.on("sendShot", data => this.handleReceiveShot(data));
         socket.on("defineFirstTurn", name => this.handleDefineFirstTurn(name));
+    }
+
+    componentWillUnmount() {
+        const { socket } = this.props;
+
+        socket.removeEventListener("allPlayersConnected", () => this.handleAllPlayersConnected());
+        socket.removeEventListener("sendDataToOpponent", data =>
+            this.handleReceiveOpponentData(data)
+        );
+        socket.removeEventListener("sendShot", data => this.handleReceiveShot(data));
+        socket.removeEventListener("defineFirstTurn", name => this.handleDefineFirstTurn(name));
     }
 
     handlePlayerLeft() {
@@ -87,6 +99,14 @@ class Multiplayer extends Component {
         setBattlePhase("WARM_UP");
     }
 
+    handlePlayerCellOnMouseOver(e) {
+        e.target.parentElement.className = "cell-selected";
+    }
+
+    handlePlayerCellOnMouseLeave(e, cell) {
+        e.target.parentElement.className = cell.className;
+    }
+
     handleEnemyCells(cell) {
         if (cell.destroyed) {
             return "enemy-cell__destroyed";
@@ -112,7 +132,7 @@ class Multiplayer extends Component {
         let Header;
 
         if (phase === WAIT) {
-            Header = <h4>Waiting for other player to connect</h4>;
+            Header = <h4>Waiting for other player to connect...</h4>;
         }
 
         if (phase === WARM_UP) {
@@ -150,8 +170,9 @@ class Multiplayer extends Component {
                 <Row className="text-center mb-4">
                     <Col>{Header}</Col>
                 </Row>
-                <Row className="mb-4">
+                <Row className="player-field mb-4">
                     <Col className="col-md-6">
+                        <h4 className="text-center">You</h4>
                         <div className="grid d-flex flex-row mb-4">
                             {player.field.map(el => (
                                 <div
@@ -167,8 +188,10 @@ class Multiplayer extends Component {
                                             player.availableShips
                                         )
                                     }
-                                    onMouseOver={() => (event.target.className = "cell-selected")}
-                                    onMouseLeave={() => (event.target.className = el.className)}
+                                    // onMouseOver={() => this.handlePlayerCellOnMouseOver(event)}
+                                    // onMouseLeave={() =>
+                                    //     this.handlePlayerCellOnMouseLeave(event, el)
+                                    // }
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>
                                 </div>
@@ -176,7 +199,8 @@ class Multiplayer extends Component {
                         </div>
                         {phase === WARM_UP ? <Controls /> : null}
                     </Col>
-                    <Col className="col-md-6">
+                    <Col className="enemy-field col-md-6">
+                        <h4 className="text-center">Enemy</h4>
                         <div className="grid d-flex flex-row">
                             {enemy.field.map(cell => (
                                 <div
@@ -184,13 +208,13 @@ class Multiplayer extends Component {
                                     key={`k${nanoid()}`}
                                     data-x={cell.x}
                                     data-y={cell.y}
-                                    onMouseOver={() => (event.target.className = "cell-selected")}
-                                    onMouseLeave={() =>
-                                        (event.target.className = this.handleEnemyCells(cell))
-                                    }
+                                    // onMouseOver={() => (event.target.className = "cell-selected")}
+                                    // onMouseLeave={() =>
+                                    //     (event.target.className = this.handleEnemyCells(cell))
+                                    // }
                                     onClick={() => this.handleSendShot({ x: cell.x, y: cell.y })}
                                 >
-                                    <img src="../../src/assets/img/aspect-ratio.png"></img>
+                                    <img src="../../src/assets/img/aspect-ratio.png" alt=""></img>
                                 </div>
                             ))}
                         </div>

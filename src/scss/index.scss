@@ -4,6 +4,7 @@
 $blue: #007bff;
 $red: #dc3545;
 $gray: #6c757d;
+$green: #28a745;
 
 .logo-text {
     font-family: "Permanent Marker", cursive;
@@ -43,7 +44,7 @@ $gray: #6c757d;
     img {
         z-index: -1;
         width: 100%;
-        border: solid 1px rgba(0, 0, 0, 0.25);
+        border: solid 2px $blue;
     }
 }
 
