@@ -42,15 +42,15 @@ class Lobby extends Component {
             <Container>
                 <Row className="logo text-center">
                     <Col>
-                        <h1 className="logo-text">Battleships</h1>
+                        <h1 className="logo-text">BATTLESHIPS-IO</h1>
                         <p className="logo-description">Classic strategy game for two players</p>
                     </Col>
                 </Row>
                 <hr />
-                <Row className="mb-4">
+                <Row className="mb-3">
                     <Col className="text-center col-sm-6 offset-sm-3">
                         <h4>Your name:</h4>
-                        <InputGroup size="lg" className="mb-4">
+                        <InputGroup size="lg" className="mb-3">
                             <Input
                                 onChange={() => setName(event.target.value)}
                                 value={player.name}
@@ -58,7 +58,7 @@ class Lobby extends Component {
                             />
                         </InputGroup>
                         <h4>Room id:</h4>
-                        <InputGroup size="lg" className="mb-4">
+                        <InputGroup size="lg" className="mb-3">
                             <Input
                                 defaultValue={player.roomId}
                                 onChange={() => setRoomId(event.target.value)}

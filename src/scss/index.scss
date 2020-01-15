@@ -84,7 +84,7 @@ $green: #28a745;
     }
 }
 
-.enemy-cell__destroyed {
+.enemy-cell_destroyed {
     flex-grow: 1;
     width: 10%;
     background-color: $red;
@@ -97,7 +97,13 @@ $green: #28a745;
     }
 }
 
+.enemy-cell_selected {
+    flex-grow: 1;
+    width: 10%;
+    border: solid 2px $red;
+}
+
 .chat {
-    height: 200px;
+    height: 100px;
     overflow: auto;
 }

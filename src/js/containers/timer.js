@@ -16,12 +16,12 @@ class Timer extends Component {
         const timerWrap = () => {
             const { decrementTimer, timer, setBattlePhase, selectShip } = this.props;
 
-            if (timer == 0) {
+            if (timer < 1) {
                 clearInterval(this.timerId);
 
                 selectShip(null);
-                setBattlePhase(BATTLE);
                 this.handleSendDataToOpponent();
+                setTimeout(() => setBattlePhase(BATTLE), 1000);
             } else {
                 decrementTimer();
             }

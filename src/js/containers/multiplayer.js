@@ -122,6 +122,23 @@ class Multiplayer extends Component {
         socket.emit("sendDataToOpponent", player.field);
     }
 
+    handleDefineWinner() {
+        const { player, enemy } = this.props;
+
+        let playerHp = player.field.filter(x => x.hasShip && !x.destroyed).length;
+        let enemyHp = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
+
+        if (playerHp === 0) {
+            return "Lose";
+        }
+
+        if (enemyHp === 0) {
+            return "Win";
+        }
+
+        return player.canShoot ? "You turn" : "Enemy Turn";
+    }
+
     handleAllPlayersConnected() {
         const { setBattlePhase } = this.props;
 
@@ -136,9 +153,13 @@ class Multiplayer extends Component {
         e.target.parentElement.className = cell.className;
     }
 
+    handleEnemyCellOnMouseOver(e) {
+        e.target.parentElement.className = "enemy-cell_selected";
+    }
+
     handleEnemyCells(cell) {
         if (cell.destroyed) {
-            return "enemy-cell__destroyed";
+            return "enemy-cell_destroyed";
         } else if (cell.missed) {
             return "cell-missed";
         } else {
@@ -174,35 +195,35 @@ class Multiplayer extends Component {
         }
 
         if (phase === BATTLE) {
-            Header = <h4>{player.canShoot ? "You turn" : "Enemy turn"}</h4>;
+            // Header = <h4>{player.canShoot ? "You turn" : "Enemy turn"}</h4>;
+            // let playerRemainingShips = player.field.filter(x => x.hasShip && !x.destroyed).length;
+            // let enemyRemainingShips = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
+            // if (enemyRemainingShips < 1) {
+            //     Header = <h4>You win!</h4>;
+            // }
+            // if (playerRemainingShips < 1) {
+            //     Header = <h4>You lose!</h4>;
+            // }
 
-            let playerRemainingShips = player.field.filter(x => x.hasShip && !x.destroyed).length;
-            let enemyRemainingShips = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
-            if (enemyRemainingShips < 1) {
-                Header = <h4>You win!</h4>;
-            }
-
-            if (playerRemainingShips < 1) {
-                Header = <h4>You lose!</h4>;
-            }
+            Header = <h4>{this.handleDefineWinner()}</h4>;
         }
 
         return (
             <Container>
-                <Row className="mb-4 mt-2">
+                <Row className="mb-3 mt-3">
                     <Col>
                         <Button onClick={() => this.handleLeaveRoom()} color="primary">
                             Back to lobby
                         </Button>
                     </Col>
                 </Row>
-                <Row className="text-center mb-4">
+                <Row className="text-center mb-3">
                     <Col>{Header}</Col>
                 </Row>
-                <Row className="board mb-4">
+                <Row className="board mb-3">
                     <Col className="board__player-field col-md-6">
                         <h4 className="text-center">You</h4>
-                        <div className="grid d-flex flex-row mb-4">
+                        <div className="grid d-flex flex-row mb-3">
                             {player.field.map(el => (
                                 <div
                                     className={el.className}
@@ -217,10 +238,10 @@ class Multiplayer extends Component {
                                             player.availableShips
                                         )
                                     }
-                                    // onMouseOver={() => this.handlePlayerCellOnMouseOver(event)}
-                                    // onMouseLeave={() =>
-                                    //     this.handlePlayerCellOnMouseLeave(event, el)
-                                    // }
+                                    onMouseOver={() => this.handlePlayerCellOnMouseOver(event)}
+                                    onMouseLeave={() =>
+                                        this.handlePlayerCellOnMouseLeave(event, el)
+                                    }
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png"></img>
                                 </div>
@@ -237,10 +258,6 @@ class Multiplayer extends Component {
                                     key={`k${nanoid()}`}
                                     data-x={cell.x}
                                     data-y={cell.y}
-                                    // onMouseOver={() => (event.target.className = "cell-selected")}
-                                    // onMouseLeave={() =>
-                                    //     (event.target.className = this.handleEnemyCells(cell))
-                                    // }
                                     onClick={() => this.handleSendShot(cell)}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png" alt=""></img>

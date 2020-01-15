@@ -1,5 +1,5 @@
 export * from "./selectGameMode";
-export * from "./toogleRegistration";
+export * from "./toggleRegistration";
 export * from "./signIn";
 
 export * from "./selectShip";
@@ -8,7 +8,7 @@ export * from "./placeShip";
 export * from "./setBattlePhase";
 export * from "./reset";
 export * from "./setRandom";
-export * from "./recieveShoot";
+export * from "./receiveShot";
 export * from "./canPlayerShoot";
 export * from "./timer";
 

@@ -20,8 +20,7 @@ const initialState = {
     field: generateField(10),
     availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
     name: "",
-    // roomId: generate("0123456789", 5),
-    roomId: 1,
+    roomId: generate("0123456789", 5),
     canShoot: false,
 };
 
