@@ -1,22 +1,10 @@
-<style>
-
-@import url('https://fonts.googleapis.com/css?family=Permanent+Marker&display=swap');
-
-.logo {
-    font-family: 'Permanent Marker', cursive;
-}
-
-</style>
-
-<h2 class='logo' align='center'>BATTLESHIPS-IO</h2>
+<h3 align='center'>BATTLESHIPS-IO</h3>
 
 <p align='center'>
     Classic strategy game for two players
     <br>
     <a href="https://battleships-io.herokuapp.com/"><strong>» Available at Heroku «</strong></a>
 </p>
-
----
 
 ## Table of contents
 
