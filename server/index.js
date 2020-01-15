@@ -12,7 +12,6 @@ app.get("/", function(req, res) {
 });
 
 let createdRooms = [];
-let users = [];
 
 io.on("connection", function(socket) {
     console.log("Socket connected:", socket.id);
@@ -22,7 +21,8 @@ io.on("connection", function(socket) {
     });
 
     socket.on("createRoom", ({ username, roomId }) => {
-        room = createdRooms.find(x => x.id === roomId);
+        let roomIdx = createdRooms.findIndex(x => x.id === roomId);
+        let room = createdRooms[roomIdx];
 
         if (room) {
             io.to(`${socket.id}`).emit("roomCreation", {
@@ -32,21 +32,11 @@ io.on("connection", function(socket) {
             return;
         }
 
-        if (users.some(x => x.name === username)) {
-            io.to(`${socket.id}`).emit("roomCreation", {
-                canCreate: false,
-                msg: "There is user with this name",
-            });
-            return;
-        }
-
         if (!room) {
             createdRooms.push({
                 id: roomId,
                 users: [username],
             });
-
-            users.push({ id: socket.id, name: username });
 
             io.to(`${socket.id}`).emit("roomCreation", {
                 canCreate: true,
@@ -60,7 +50,8 @@ io.on("connection", function(socket) {
     });
 
     socket.on("joinRoom", ({ username, roomId }) => {
-        room = createdRooms.find(x => x.id === roomId);
+        let roomIdx = createdRooms.findIndex(x => x.id === roomId);
+        let room = createdRooms[roomIdx];
 
         if (!room) {
             io.to(`${socket.id}`).emit("playerConnection", {
@@ -70,7 +61,7 @@ io.on("connection", function(socket) {
             return;
         }
 
-        if (users.some(x => x.name === username)) {
+        if (room.users.some(x => x === username)) {
             io.to(`${socket.id}`).emit("playerConnection", {
                 canConnect: false,
                 msg: "There is user with this name",
@@ -88,8 +79,6 @@ io.on("connection", function(socket) {
         if (room && room.users.length < 2) {
             room.users.push(username);
 
-            users.push({ id: socket.id, name: username });
-
             socket.join(roomId);
 
             io.to(`${socket.id}`).emit("playerConnection", {
@@ -102,8 +91,6 @@ io.on("connection", function(socket) {
                 msg: `User ${username} connected!`,
             });
 
-            console.log(createdRooms);
-
             let firstPlayer = room.users[defineFirstTurn()];
 
             setTimeout(() => io.emit("allPlayersConnected"), 1500);
@@ -112,13 +99,27 @@ io.on("connection", function(socket) {
         }
     });
 
-    socket.on("playerLeft", data => {
+    socket.on("leaveRoom", data => {
+        let roomIdx = createdRooms.findIndex(x => x.id === data.roomId);
+        let room = createdRooms[roomIdx];
+        let userIdx = room.users.findIndex(x => x === data.username);
+
+        if (userIdx !== -1) {
+            room.users.splice(userIdx, 1);
+        }
+
+        if (room.users.length < 1) {
+            createdRooms.splice(roomIdx, 1);
+        }
+
         socket.leave(data.roomId);
 
         socket.broadcast.emit("chatMsg", {
             username: "INFO",
-            msg: `User ${username} left!`,
+            msg: `User ${data.username} left!`,
         });
+
+        socket.broadcast.emit("playerLeft");
     });
 
     socket.on("sendDataToOpponent", data => {

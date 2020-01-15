@@ -15,6 +15,7 @@ import {
     canPlayerShoot,
     receiveShot,
     shootAtEnemy,
+    reset,
 } from "../actions";
 
 import Chat from "./chat";
@@ -30,6 +31,7 @@ class Multiplayer extends Component {
         const { socket } = this.props;
 
         socket.on("allPlayersConnected", () => this.handleAllPlayersConnected());
+        socket.on("playerLeft", () => this.handleOpponentLeft());
         socket.on("sendDataToOpponent", data => this.handleReceiveOpponentData(data));
         socket.on("sendShot", data => this.handleReceiveShot(data));
         socket.on("defineFirstTurn", name => this.handleDefineFirstTurn(name));
@@ -39,6 +41,7 @@ class Multiplayer extends Component {
         const { socket } = this.props;
 
         socket.removeEventListener("allPlayersConnected", () => this.handleAllPlayersConnected());
+        socket.removeEventListener("playerLeft", () => this.handleOpponentLeft());
         socket.removeEventListener("sendDataToOpponent", data =>
             this.handleReceiveOpponentData(data)
         );
@@ -46,12 +49,21 @@ class Multiplayer extends Component {
         socket.removeEventListener("defineFirstTurn", name => this.handleDefineFirstTurn(name));
     }
 
-    handlePlayerLeft() {
-        const { socket, selectLobby, player } = this.props;
+    handleLeaveRoom() {
+        const { socket, selectLobby, player, reset, setBattlePhase } = this.props;
 
-        socket.emit("playerLeft", { username: player.name, roomId: player.roomId });
+        socket.emit("leaveRoom", { username: player.name, roomId: player.roomId });
 
+        reset();
+        setBattlePhase(WAIT);
         selectLobby();
+    }
+
+    handleOpponentLeft() {
+        const { reset, setBattlePhase } = this.props;
+
+        setBattlePhase(WAIT);
+        reset();
     }
 
     handleDefineFirstTurn(name) {
@@ -63,22 +75,39 @@ class Multiplayer extends Component {
     }
 
     handleSendShot(cell) {
-        const { socket, phase, player, canPlayerShoot } = this.props;
+        const { socket, phase, player, enemy, canPlayerShoot } = this.props;
+
+        let targetCell = enemy.field.find(el => el.x === cell.x && el.y === cell.y);
 
         if (player.canShoot && phase === BATTLE) {
-            socket.emit("sendShot", cell);
-            canPlayerShoot(false);
+            if (!targetCell.destroyed && !targetCell.missed) {
+                socket.emit("sendShot", cell);
+                canPlayerShoot(false);
+            }
+
+            if (targetCell.hasShip) {
+                socket.emit("sendShot", cell);
+                canPlayerShoot(true);
+            }
         }
     }
 
     handleReceiveShot(data) {
-        const { receiveShot, canPlayerShoot } = this.props;
+        const { receiveShot, canPlayerShoot, player } = this.props;
 
         receiveShot(data);
 
-        this.handleSendDataToOpponent();
+        let targetCell = player.field.find(
+            cell => cell.x === data.x && cell.y === data.y && cell.hasShip
+        );
 
-        canPlayerShoot(true);
+        if (targetCell) {
+            canPlayerShoot(false);
+        } else {
+            canPlayerShoot(true);
+        }
+
+        this.handleSendDataToOpponent();
     }
 
     handleReceiveOpponentData(data) {
@@ -146,9 +175,9 @@ class Multiplayer extends Component {
 
         if (phase === BATTLE) {
             Header = <h4>{player.canShoot ? "You turn" : "Enemy turn"}</h4>;
+
             let playerRemainingShips = player.field.filter(x => x.hasShip && !x.destroyed).length;
             let enemyRemainingShips = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
-
             if (enemyRemainingShips < 1) {
                 Header = <h4>You win!</h4>;
             }
@@ -162,7 +191,7 @@ class Multiplayer extends Component {
             <Container>
                 <Row className="mb-4 mt-2">
                     <Col>
-                        <Button onClick={() => this.handlePlayerLeft()} color="primary">
+                        <Button onClick={() => this.handleLeaveRoom()} color="primary">
                             Back to lobby
                         </Button>
                     </Col>
@@ -170,8 +199,8 @@ class Multiplayer extends Component {
                 <Row className="text-center mb-4">
                     <Col>{Header}</Col>
                 </Row>
-                <Row className="player-field mb-4">
-                    <Col className="col-md-6">
+                <Row className="board mb-4">
+                    <Col className="board__player-field col-md-6">
                         <h4 className="text-center">You</h4>
                         <div className="grid d-flex flex-row mb-4">
                             {player.field.map(el => (
@@ -199,7 +228,7 @@ class Multiplayer extends Component {
                         </div>
                         {phase === WARM_UP ? <Controls /> : null}
                     </Col>
-                    <Col className="enemy-field col-md-6">
+                    <Col className="board__enemy-field col-md-6">
                         <h4 className="text-center">Enemy</h4>
                         <div className="grid d-flex flex-row">
                             {enemy.field.map(cell => (
@@ -212,7 +241,7 @@ class Multiplayer extends Component {
                                     // onMouseLeave={() =>
                                     //     (event.target.className = this.handleEnemyCells(cell))
                                     // }
-                                    onClick={() => this.handleSendShot({ x: cell.x, y: cell.y })}
+                                    onClick={() => this.handleSendShot(cell)}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png" alt=""></img>
                                 </div>
@@ -253,6 +282,7 @@ const mapDispatchToProps = dispatch => {
         setEnemyField: field => dispatch(setEnemyField(field)),
         receiveShot: position => dispatch(receiveShot(position)),
         canPlayerShoot: bool => dispatch(canPlayerShoot(bool)),
+        reset: () => dispatch(reset()),
     };
 };
 

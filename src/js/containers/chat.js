@@ -14,6 +14,12 @@ class Chat extends Component {
         socket.on("chatMsg", data => this.handleReceiveMessage(data));
     }
 
+    componentWillUnmount() {
+        const { socket } = this.props;
+
+        socket.removeEventListener("chatMsg", data => this.handleReceiveMessage(data));
+    }
+
     handleReceiveMessage(data) {
         if (data) {
             let div = document.createElement("div");

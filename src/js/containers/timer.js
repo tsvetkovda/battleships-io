@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { decrementTimer, setBattlePhase, selectShip, BATTLE } from "../actions";
+import { decrementTimer, resetTimer, setBattlePhase, selectShip, BATTLE } from "../actions";
 
 class Timer extends Component {
     constructor(props) {
@@ -11,6 +11,8 @@ class Timer extends Component {
     }
 
     componentDidMount() {
+        this.props.resetTimer();
+
         const timerWrap = () => {
             const { decrementTimer, timer, setBattlePhase, selectShip } = this.props;
 
@@ -26,6 +28,10 @@ class Timer extends Component {
         };
 
         this.timerId = setInterval(timerWrap, 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerId);
     }
 
     handleSendDataToOpponent() {
@@ -55,6 +61,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         decrementTimer: () => dispatch(decrementTimer()),
+        resetTimer: () => dispatch(resetTimer()),
         setBattlePhase: phase => dispatch(setBattlePhase(phase)),
         selectShip: size => dispatch(selectShip(size)),
     };

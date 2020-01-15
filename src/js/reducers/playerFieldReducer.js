@@ -20,7 +20,8 @@ const initialState = {
     field: generateField(10),
     availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
     name: "",
-    roomId: generate("0123456789", 5),
+    // roomId: generate("0123456789", 5),
+    roomId: 1,
     canShoot: false,
 };
 
@@ -87,10 +88,10 @@ const playerReducer = (state = initialState, action) => {
         }
 
         case RECEIVE_SHOT: {
-            const { position } = action;
+            const { cell } = action;
 
             let newField = cloneDeep(state.field);
-            let targetCell = newField.find(cell => cell.x === position.x && cell.y === position.y);
+            let targetCell = newField.find(el => el.x === cell.x && el.y === cell.y);
 
             if (targetCell && targetCell.hasShip) {
                 targetCell.destroyed = true;
@@ -104,7 +105,12 @@ const playerReducer = (state = initialState, action) => {
         }
 
         case RESET: {
-            return initialState;
+            return {
+                ...state,
+                field: initialState.field,
+                availableShips: initialState.availableShips,
+                canShoot: initialState.canShoot,
+            };
         }
 
         case SET_RANDOM: {
