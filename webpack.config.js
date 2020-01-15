@@ -1,6 +1,7 @@
 const path = require("path");
 const autoprefixer = require("autoprefixer");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     entry: "./src/index.js",
@@ -68,6 +69,11 @@ module.exports = {
             removeComments: true,
         }),
     ],
+
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin()],
+    },
 
     devServer: {
         inline: true,
