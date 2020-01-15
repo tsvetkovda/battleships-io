@@ -10,9 +10,11 @@ const enemyFieldReducer = (state = initialState, action) => {
         case SHOOT_AT_ENEMY: {
             const { position } = action;
 
-            let newField = cloneDeep(state.field);
+            const newField = cloneDeep(state.field);
 
-            let targetCell = newField.find(cell => cell.x === position.x && cell.y === position.y);
+            const targetCell = newField.find(
+                cell => cell.x === position.x && cell.y === position.y
+            );
 
             if (targetCell && targetCell.hasShip) targetCell.destroyed = true;
             else targetCell.missed = true;

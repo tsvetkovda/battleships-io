@@ -5,10 +5,6 @@ import { Button, ButtonGroup, Badge } from "reactstrap";
 import { selectShip, changeOrientation, reset, setRandom } from "../actions";
 
 class Controls extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         const {
             player,
@@ -67,7 +63,8 @@ class Controls extends Component {
                     </Badge>
                 </Button>
                 <Button color="secondary" outline onClick={changeOrientation}>
-                    Rotate <Badge color="secondary">{orientation}</Badge>
+                    Rotate
+                    <Badge color="secondary">{orientation}</Badge>
                 </Button>
                 <Button color="secondary" outline onClick={reset}>
                     Reset

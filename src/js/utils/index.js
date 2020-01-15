@@ -1,5 +1,5 @@
 export const generateField = size => {
-    let arr = [];
+    const arr = [];
     for (let row = 0; row < size; row++) {
         arr[row] = [];
         for (let col = 0; col < size; col++) {

@@ -1,20 +1,17 @@
 import generate from "nanoid/generate";
 
-import { generateField, lockedCells } from "../utils";
+import { generateField, lockedCells, cloneDeep } from "../utils";
 
 import {
     PLACE_SHIP,
     HORIZONTAL,
     VERTICAL,
     RESET,
-    SET_RANDOM,
     SET_NAME,
     SET_ROOM_ID,
     RECEIVE_SHOT,
     CAN_PLAYER_SHOOT,
 } from "../actions";
-
-import { cloneDeep } from "../utils";
 
 const initialState = {
     field: generateField(10),
@@ -29,12 +26,12 @@ const playerReducer = (state = initialState, action) => {
         case PLACE_SHIP: {
             const { position, orientation, shipSize } = action;
 
-            let newState = cloneDeep(state);
-            let occupiedCells = [];
+            const newState = cloneDeep(state);
+            const occupiedCells = [];
 
             for (let i = 0; i < shipSize; i++) {
                 if (orientation === HORIZONTAL) {
-                    let x = newState.field.find(
+                    const x = newState.field.find(
                         cell =>
                             cell.x === position.x + i &&
                             cell.y === position.y &&
@@ -45,7 +42,7 @@ const playerReducer = (state = initialState, action) => {
                 }
 
                 if (orientation === VERTICAL) {
-                    let x = newState.field.find(
+                    const x = newState.field.find(
                         cell =>
                             cell.x === position.x &&
                             cell.y === position.y + i &&
@@ -89,8 +86,8 @@ const playerReducer = (state = initialState, action) => {
         case RECEIVE_SHOT: {
             const { cell } = action;
 
-            let newField = cloneDeep(state.field);
-            let targetCell = newField.find(el => el.x === cell.x && el.y === cell.y);
+            const newField = cloneDeep(state.field);
+            const targetCell = newField.find(el => el.x === cell.x && el.y === cell.y);
 
             if (targetCell && targetCell.hasShip) {
                 targetCell.destroyed = true;
@@ -110,9 +107,6 @@ const playerReducer = (state = initialState, action) => {
                 availableShips: initialState.availableShips,
                 canShoot: initialState.canShoot,
             };
-        }
-
-        case SET_RANDOM: {
         }
 
         case SET_NAME: {

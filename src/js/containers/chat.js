@@ -5,10 +5,6 @@ import { Button, Input, InputGroup, InputGroupAddon } from "reactstrap";
 import { setMessage } from "../actions";
 
 class Chat extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         const { socket } = this.props;
         socket.on("chatMsg", data => this.handleReceiveMessage(data));
@@ -22,7 +18,7 @@ class Chat extends Component {
 
     handleReceiveMessage(data) {
         if (data) {
-            let div = document.createElement("div");
+            const div = document.createElement("div");
             document.querySelector(".chat").append(`${data.username}: ${data.msg}`, div);
         }
     }
@@ -40,9 +36,9 @@ class Chat extends Component {
 
         return (
             <>
-                <div className="chat"></div>
+                <div className="chat" />
                 <InputGroup>
-                    <Input onChange={() => setMessage(event.target.value)} value={message} />
+                    <Input onChange={event => setMessage(event.target.value)} value={message} />
                     <InputGroupAddon addonType="append">
                         <Button onClick={() => this.handleSendMessage()}>Send</Button>
                     </InputGroupAddon>

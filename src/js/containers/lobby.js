@@ -5,32 +5,24 @@ import { Button, Container, Row, Col, Input, InputGroup } from "reactstrap";
 import { selectGameMode, MULTIPLAYER, setName, setRoomId } from "../actions";
 
 class Lobby extends Component {
-    constructor() {
-        super();
-    }
-
-    componentDidMount() {
-        const { socket } = this.props;
-    }
-
     handleGameCreation() {
-        const { socket, player } = this.props;
+        const { socket, player, selectMultiplayer } = this.props;
 
         socket.emit("createRoom", { username: player.name, roomId: player.roomId });
 
         socket.on("roomCreation", data => {
-            if (data.canCreate) this.props.selectMultiplayer();
+            if (data.canCreate) selectMultiplayer();
             else console.log(data.msg);
         });
     }
 
     handleJoinGame() {
-        const { socket, player } = this.props;
+        const { socket, player, selectMultiplayer } = this.props;
 
         socket.emit("joinRoom", { username: player.name, roomId: player.roomId });
 
         socket.on("playerConnection", data => {
-            if (data.canConnect) this.props.selectMultiplayer();
+            if (data.canConnect) selectMultiplayer();
             else console.log(data.msg);
         });
     }
@@ -52,7 +44,7 @@ class Lobby extends Component {
                         <h4>Your name:</h4>
                         <InputGroup size="lg" className="mb-3">
                             <Input
-                                onChange={() => setName(event.target.value)}
+                                onChange={event => setName(event.target.value)}
                                 value={player.name}
                                 className="text-center"
                             />
@@ -61,7 +53,7 @@ class Lobby extends Component {
                         <InputGroup size="lg" className="mb-3">
                             <Input
                                 defaultValue={player.roomId}
-                                onChange={() => setRoomId(event.target.value)}
+                                onChange={event => setRoomId(event.target.value)}
                                 className="text-center"
                             />
                         </InputGroup>

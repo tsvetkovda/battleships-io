@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Container, Row, Col, Button } from "reactstrap";
@@ -24,10 +25,6 @@ import Controls from "./controls";
 import Timer from "./timer";
 
 class Multiplayer extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         const { socket } = this.props;
 
@@ -80,7 +77,7 @@ class Multiplayer extends Component {
     handleSendShot(cell) {
         const { socket, phase, player, enemy, canPlayerShoot } = this.props;
 
-        let targetCell = enemy.field.find(el => el.x === cell.x && el.y === cell.y);
+        const targetCell = enemy.field.find(el => el.x === cell.x && el.y === cell.y);
 
         if (player.canShoot && phase === BATTLE) {
             if (!targetCell.destroyed && !targetCell.missed) {
@@ -100,7 +97,7 @@ class Multiplayer extends Component {
 
         receiveShot(data);
 
-        let targetCell = player.field.find(
+        const targetCell = player.field.find(
             cell => cell.x === data.x && cell.y === data.y && cell.hasShip
         );
 
@@ -128,15 +125,15 @@ class Multiplayer extends Component {
     handleDefineWinner() {
         const { player, enemy } = this.props;
 
-        let playerHp = player.field.filter(x => x.hasShip && !x.destroyed).length;
-        let enemyHp = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
+        const playerHp = player.field.filter(x => x.hasShip && !x.destroyed).length;
+        const enemyHp = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
 
         if (playerHp === 0) {
-            return "Lose";
+            return "You lose";
         }
 
         if (enemyHp === 0) {
-            return "Win";
+            return "You win";
         }
 
         return player.canShoot ? "You turn" : "Enemy Turn";
@@ -157,24 +154,23 @@ class Multiplayer extends Component {
     }
 
     handleEnemyCellOnMouseOver(e) {
-        e.target.parentElement.className = "enemy-cell_selected";
+        if (e.target.parentElement.className === "cell") {
+            e.target.parentElement.className = "enemy-cell_selected";
+        }
     }
 
     handleEnemyCells(cell) {
-        if (cell.destroyed) {
-            return "enemy-cell_destroyed";
-        } else if (cell.missed) {
-            return "cell-missed";
-        } else {
-            return "cell";
-        }
+        if (cell.destroyed) return "enemy-cell_destroyed";
+
+        if (cell.missed) return "cell-missed";
+
+        return "cell";
     }
 
     render() {
         const {
             selectedShipSize,
             orientation,
-            selectLobby,
             placeShip,
             player,
             enemy,
@@ -198,16 +194,6 @@ class Multiplayer extends Component {
         }
 
         if (phase === BATTLE) {
-            // Header = <h4>{player.canShoot ? "You turn" : "Enemy turn"}</h4>;
-            // let playerRemainingShips = player.field.filter(x => x.hasShip && !x.destroyed).length;
-            // let enemyRemainingShips = enemy.field.filter(x => x.hasShip && !x.destroyed).length;
-            // if (enemyRemainingShips < 1) {
-            //     Header = <h4>You win!</h4>;
-            // }
-            // if (playerRemainingShips < 1) {
-            //     Header = <h4>You lose!</h4>;
-            // }
-
             Header = <h4>{this.handleDefineWinner()}</h4>;
         }
 
@@ -233,6 +219,7 @@ class Multiplayer extends Component {
                                     key={`k${nanoid()}`}
                                     data-x={el.x}
                                     data-y={el.y}
+                                    role="cell"
                                     onClick={() =>
                                         placeShip(
                                             { x: el.x, y: el.y },
@@ -241,12 +228,12 @@ class Multiplayer extends Component {
                                             player.availableShips
                                         )
                                     }
-                                    onMouseOver={() => this.handlePlayerCellOnMouseOver(event)}
-                                    onMouseLeave={() =>
-                                        this.handlePlayerCellOnMouseLeave(event, el)
-                                    }
+                                    // onMouseOver={event => this.handlePlayerCellOnMouseOver(event)}
+                                    // onMouseLeave={event =>
+                                    //     this.handlePlayerCellOnMouseLeave(event, el)
+                                    // }
                                 >
-                                    <img src="../../src/assets/img/aspect-ratio.png"></img>
+                                    <img src="../../src/assets/img/aspect-ratio.png" alt="" />
                                 </div>
                             ))}
                         </div>
@@ -261,7 +248,10 @@ class Multiplayer extends Component {
                                     key={`k${nanoid()}`}
                                     data-x={cell.x}
                                     data-y={cell.y}
+                                    role="cell"
                                     onClick={() => this.handleSendShot(cell)}
+                                    // onMouseOver={event => this.handleEnemyCellOnMouseOver(event)}
+                                    // onMouseLeave={() => this.handleEnemyCells(cell)}
                                 >
                                     <img src="../../src/assets/img/aspect-ratio.png" alt="" />
                                 </div>
