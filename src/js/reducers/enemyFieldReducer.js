@@ -1,5 +1,5 @@
 import { cloneDeep, generateField } from "../utils";
-import { SHOOT_AT_ENEMY, SET_ENEMY_FIELD } from "../actions";
+import { SHOOT_AT_ENEMY, SET_ENEMY_FIELD, RESET_ENEMY_FIELD } from "../actions";
 
 const initialState = {
     field: generateField(10),
@@ -22,6 +22,11 @@ const enemyFieldReducer = (state = initialState, action) => {
         case SET_ENEMY_FIELD: {
             return { ...state, field: action.field };
         }
+
+        case RESET_ENEMY_FIELD: {
+            return { ...state, field: initialState.field };
+        }
+
         default:
             return state;
     }

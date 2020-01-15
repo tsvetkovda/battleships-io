@@ -16,6 +16,7 @@ import {
     receiveShot,
     shootAtEnemy,
     reset,
+    resetEnemyField,
 } from "../actions";
 
 import Chat from "./chat";
@@ -50,20 +51,22 @@ class Multiplayer extends Component {
     }
 
     handleLeaveRoom() {
-        const { socket, selectLobby, player, reset, setBattlePhase } = this.props;
+        const { socket, selectLobby, player, reset, resetEnemyField, setBattlePhase } = this.props;
 
         socket.emit("leaveRoom", { username: player.name, roomId: player.roomId });
 
         reset();
+        resetEnemyField();
         setBattlePhase(WAIT);
         selectLobby();
     }
 
     handleOpponentLeft() {
-        const { reset, setBattlePhase } = this.props;
+        const { reset, resetEnemyField, setBattlePhase } = this.props;
 
         setBattlePhase(WAIT);
         reset();
+        resetEnemyField();
     }
 
     handleDefineFirstTurn(name) {
@@ -260,7 +263,7 @@ class Multiplayer extends Component {
                                     data-y={cell.y}
                                     onClick={() => this.handleSendShot(cell)}
                                 >
-                                    <img src="../../src/assets/img/aspect-ratio.png" alt=""></img>
+                                    <img src="../../src/assets/img/aspect-ratio.png" alt="" />
                                 </div>
                             ))}
                         </div>
@@ -300,6 +303,7 @@ const mapDispatchToProps = dispatch => {
         receiveShot: position => dispatch(receiveShot(position)),
         canPlayerShoot: bool => dispatch(canPlayerShoot(bool)),
         reset: () => dispatch(reset()),
+        resetEnemyField: () => dispatch(resetEnemyField()),
     };
 };
 
