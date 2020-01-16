@@ -13,7 +13,7 @@
 
 ## Overview
 
-This game is build using next technologies:
+This game was build using next technologies:
 
 -   React
 -   Redux

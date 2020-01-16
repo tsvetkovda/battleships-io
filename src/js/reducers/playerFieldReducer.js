@@ -105,7 +105,7 @@ const playerReducer = (state = initialState, action) => {
                 ...state,
                 field: initialState.field,
                 availableShips: initialState.availableShips,
-                canShoot: initialState.canShoot,
+                canShoot: state.canShoot,
             };
         }
 
