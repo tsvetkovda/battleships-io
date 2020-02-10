@@ -1,76 +1,83 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { decrementTimer, resetTimer, setBattlePhase, selectShip, reset, BATTLE } from "../actions";
+import {
+  decrementTimer,
+  resetTimer,
+  setBattlePhase,
+  selectShip,
+  reset,
+  BATTLE,
+} from '../actions';
 
 class Timer extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.timerId = null;
-    }
+    this.timerId = null;
+  }
 
-    componentDidMount() {
-        const { resetTimer, reset } = this.props;
+  componentDidMount() {
+    const { resetTimer, reset } = this.props;
 
-        resetTimer();
-        reset();
+    resetTimer();
+    reset();
 
-        const timerWrap = () => {
-            const { decrementTimer, timer, setBattlePhase, selectShip } = this.props;
+    const timerWrap = () => {
+      const { decrementTimer, timer, setBattlePhase, selectShip } = this.props;
 
-            if (timer == 0) {
-                clearInterval(this.timerId);
-
-                selectShip(null);
-                this.handleSendDataToOpponent();
-                setTimeout(() => setBattlePhase(BATTLE), 1000);
-            } else {
-                decrementTimer();
-            }
-        };
-
-        this.timerId = setInterval(timerWrap, 1000);
-    }
-
-    componentWillUnmount() {
+      if (timer == 0) {
         clearInterval(this.timerId);
-    }
 
-    handleSendDataToOpponent() {
-        const { socket, player } = this.props;
+        selectShip(null);
+        this.handleSendDataToOpponent();
+        setTimeout(() => setBattlePhase(BATTLE), 1000);
+      } else {
+        decrementTimer();
+      }
+    };
 
-        socket.emit("sendDataToOpponent", player.field);
-    }
+    this.timerId = setInterval(timerWrap, 1000);
+  }
 
-    render() {
-        const { timer } = this.props;
+  componentWillUnmount() {
+    clearInterval(this.timerId);
+  }
 
-        // let timerElement = timer > 0 ? <div className="timer">{timer}</div> : null;
+  handleSendDataToOpponent() {
+    const { socket, player } = this.props;
 
-        // return timerElement;
+    socket.emit('sendDataToOpponent', player.field);
+  }
 
-        return <div className="timer">{timer}</div>;
-    }
+  render() {
+    const { timer } = this.props;
+
+    // let timerElement = timer > 0 ? <div className="timer">{timer}</div> : null;
+
+    // return timerElement;
+
+    return <div className='timer'>{timer}</div>;
+  }
 }
 
-const mapStateToProps = state => {
-    const { timer, player } = state;
+const mapStateToProps = (state) => {
+  const { timer, player } = state;
 
-    return {
-        timer,
-        player,
-    };
+  return {
+    timer,
+    player,
+  };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        decrementTimer: () => dispatch(decrementTimer()),
-        resetTimer: () => dispatch(resetTimer()),
-        setBattlePhase: phase => dispatch(setBattlePhase(phase)),
-        selectShip: size => dispatch(selectShip(size)),
-        reset: () => dispatch(reset()),
-    };
+const mapDispatchToProps = (dispatch) => {
+  return {
+    decrementTimer: () => dispatch(decrementTimer()),
+    resetTimer: () => dispatch(resetTimer()),
+    setBattlePhase: (phase) => dispatch(setBattlePhase(phase)),
+    selectShip: (size) => dispatch(selectShip(size)),
+    reset: () => dispatch(reset()),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Timer);

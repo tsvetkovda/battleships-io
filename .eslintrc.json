@@ -1,34 +1,33 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": [
+    "airbnb",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "prettier/react"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": [
-        "airbnb",
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:prettier/recommended",
-        "prettier/react"
-    ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "plugins": ["react", "prettier"],
-    "rules": {
-        "no-plusplus": 0,
-        "no-shadow": 0,
-        "import/no-extraneous-dependencies": 0,
-        "class-methods-use-this": 0,
-        "react/jsx-filename-extension": 0,
-        "react/prefer-stateless-function": 0,
-        "react/prop-types": 0
-    }
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "prettier"],
+  "rules": {
+    "no-plusplus": 0,
+    "no-shadow": 0,
+    "class-methods-use-this": 0,
+    "react/jsx-filename-extension": 0,
+    "react/prefer-stateless-function": 0,
+    "no-underscore-dangle": 0
+  }
 }

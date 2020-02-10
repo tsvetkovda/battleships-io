@@ -1,5 +1,5 @@
-export const SIGN_IN = "SIGN_IN";
+export const SIGN_IN = 'SIGN_IN';
 
 export const signIn = () => ({
-    type: SIGN_IN,
+  type: SIGN_IN,
 });

@@ -1,85 +1,90 @@
-const path = require("path");
-const autoprefixer = require("autoprefixer");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+const path = require('path');
+const autoprefixer = require('autoprefixer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-    entry: "./src/index.js",
+  entry: './src/index.js',
 
-    output: {
-        filename: "main.js",
-        path: path.resolve(__dirname, "dist"),
-    },
+  output: {
+    filename: 'main.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
 
-    resolve: {
-        extensions: [".js", ".jsx"],
-    },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  },
 
-    module: {
+  module: {
+    rules: [
+      {
         rules: [
-            {
-                rules: [
-                    {
-                        test: /\.(html)$/,
-                        use: ["html-loader"],
-                    },
-                ],
-            },
-            {
-                test: /\.(js|jsx)$/,
-                use: ["babel-loader"],
-            },
-            {
-                test: /\.(jpe?g|png|gif|svg)$/i,
-                exclude: /(node_modules)/,
-                use: {
-                    loader: "file-loader",
-                    options: {
-                        name: "[path][name].[ext]",
-                    },
-                },
-            },
-            {
-                test: /\.(css|scss)$/,
-                exclude: /(node_modules)/,
-                use: [
-                    "style-loader",
-                    "css-loader",
-                    {
-                        loader: "postcss-loader",
-                        options: {
-                            plugins: [autoprefixer],
-                        },
-                    },
-                    {
-                        loader: "sass-loader",
-                        options: {
-                            sourceMap: true,
-                        },
-                    },
-                ],
-            },
+          {
+            test: /\.html$/,
+            use: ['html-loader'],
+          },
         ],
-    },
-
-    plugins: [
-        new HtmlWebpackPlugin({
-            filename: "index.html",
-            template: "./src/index.html",
-            removeComments: true,
-        }),
+      },
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(ts|js)x?$/,
+        use: ['babel-loader'],
+      },
+      {
+        test: /\.jpe?g|png|gif|svg$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[path][name].[ext]',
+          },
+        },
+      },
+      {
+        test: /\.css|scss$/,
+        exclude: /node_modules/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: [autoprefixer],
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
+      },
     ],
+  },
 
-    optimization: {
-        minimize: true,
-        minimizer: [new TerserPlugin()],
-    },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './src/index.html',
+      removeComments: true,
+    }),
+  ],
 
-    devServer: {
-        inline: true,
-        compress: true,
-        open: false,
-        hot: true,
-        port: 9000,
-    },
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
+
+  devServer: {
+    inline: true,
+    compress: true,
+    open: false,
+    hot: true,
+    port: 9000,
+  },
 };
