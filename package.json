@@ -2,9 +2,9 @@
   "name": "battleships-io",
   "version": "1.0.0",
   "description": "Classic strategy game for two players",
-  "main": "index.tsx",
+  "main": "index.ts",
   "scripts": {
-    "main": "src/index.tsx",
+    "main": "src/server/index.ts",
     "start": "node ./src/server/index.ts",
     "test": "jest",
     "lint": "eslint src",
