@@ -10,7 +10,20 @@ import {
   BATTLE,
 } from '../actions';
 
-class Timer extends Component {
+import { IPlayer } from '../utils/interfaces';
+
+interface IProps {
+  timer: number;
+  player: IPlayer;
+  socket: any;
+  resetTimer: () => void;
+  reset: () => void;
+  decrementTimer: () => void;
+  setBattlePhase: (phase: string) => void;
+  selectShip: (shipSize: number) => void;
+}
+
+class Timer extends Component<IProps> {
   constructor(props) {
     super(props);
 
@@ -26,6 +39,7 @@ class Timer extends Component {
     const timerWrap = () => {
       const { decrementTimer, timer, setBattlePhase, selectShip } = this.props;
 
+      // eslint-disable-next-line eqeqeq
       if (timer == 0) {
         clearInterval(this.timerId);
 
@@ -53,15 +67,11 @@ class Timer extends Component {
   render() {
     const { timer } = this.props;
 
-    // let timerElement = timer > 0 ? <div className="timer">{timer}</div> : null;
-
-    // return timerElement;
-
     return <div className='timer'>{timer}</div>;
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: any) => {
   const { timer, player } = state;
 
   return {
@@ -70,12 +80,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
     decrementTimer: () => dispatch(decrementTimer()),
     resetTimer: () => dispatch(resetTimer()),
-    setBattlePhase: (phase) => dispatch(setBattlePhase(phase)),
-    selectShip: (size) => dispatch(selectShip(size)),
+    setBattlePhase: (phase: string) => dispatch(setBattlePhase(phase)),
+    selectShip: (size: number) => dispatch(selectShip(size)),
     reset: () => dispatch(reset()),
   };
 };

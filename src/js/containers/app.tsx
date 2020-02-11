@@ -5,20 +5,16 @@ import io from 'socket.io-client';
 import Lobby from './lobby';
 import Multiplayer from './multiplayer';
 
-import { LOBBY } from '../actions/index.js';
+import { LOBBY } from '../actions/index';
 
 const socket = io('/');
 
-type Props = {
-  mode: string;
-};
-
-interface MapStateToProps {
+interface IProps {
   mode: string;
 }
 
-class App extends Component<Props> {
-  constructor(props: Props) {
+class App extends Component<IProps> {
+  constructor(props: IProps) {
     super(props);
   }
 
@@ -33,7 +29,7 @@ class App extends Component<Props> {
   }
 }
 
-const mapStateToProps = (state: MapStateToProps) => {
+const mapStateToProps = (state: any) => {
   const { mode } = state;
   return { mode };
 };

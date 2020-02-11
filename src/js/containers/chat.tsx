@@ -2,28 +2,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
-import { setMessage } from '../actions';
+import { setMessage } from '../actions/index';
 
-type Props = {
-  player: {
-    field: [];
-    availableShips: {};
-    name: string;
-    roomId: string;
-    canShoot: boolean;
-  };
+import { IPlayer } from '../utils/interfaces';
+
+interface IProps {
+  player: IPlayer;
   message: string;
   socket: any;
-  setMessage: (x: string) => any;
-  setMessageClear: () => any;
-};
-
-interface MapStateToProps {
-  player: {};
-  message: string;
+  setMessage: (message: string) => void;
+  setMessageClear: () => void;
 }
 
-class Chat extends Component<Props> {
+class Chat extends Component<IProps> {
   componentDidMount() {
     const { socket } = this.props;
 
@@ -80,7 +71,7 @@ class Chat extends Component<Props> {
   }
 }
 
-const mapStateToProps = (state: MapStateToProps) => {
+const mapStateToProps = (state: any) => {
   const { player, message } = state;
 
   return { player, message };

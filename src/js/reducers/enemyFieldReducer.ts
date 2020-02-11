@@ -1,7 +1,17 @@
-import cloneDeep from '../utils/cloneDeep.ts';
-import generateField from '../utils/generateField.ts';
+import cloneDeep from '../utils/cloneDeep';
+import generateField from '../utils/generateField';
 
 import { SHOOT_AT_ENEMY, SET_ENEMY_FIELD, RESET_ENEMY_FIELD } from '../actions';
+
+interface Cell {
+  x: number;
+  y: number;
+  hasShip: boolean;
+  locked: boolean;
+  destroyed: boolean;
+  missed: boolean;
+  className: string;
+}
 
 const initialState = {
   field: generateField(10),
@@ -14,8 +24,8 @@ const enemyFieldReducer = (state = initialState, action) => {
 
       const newField = cloneDeep(state.field);
 
-      const targetCell = newField.find(
-        (cell) => cell.x === position.x && cell.y === position.y
+      const targetCell: Cell = newField.find(
+        (cell: Cell) => cell.x === position.x && cell.y === position.y
       );
 
       if (targetCell && targetCell.hasShip) targetCell.destroyed = true;

@@ -2,16 +2,16 @@
   "name": "battleships-io",
   "version": "1.0.0",
   "description": "Classic strategy game for two players",
-  "main": "index.js",
+  "main": "index.tsx",
   "scripts": {
-    "main": "src/index.js",
-    "start": "node ./src/server/index.js",
+    "main": "src/index.tsx",
+    "start": "node ./src/server/index.ts",
     "test": "jest",
     "lint": "eslint src",
     "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch --debug --display-error-details",
     "dev": "webpack-dev-server",
-    "server": "nodemon ./src/server/index.js"
+    "server": "nodemon ./src/server/index.ts"
   },
   "repository": {
     "type": "git",
@@ -70,6 +70,7 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
+    "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.0",
     "nodemon": "^2.0.2",
     "postcss-loader": "^3.0.0",

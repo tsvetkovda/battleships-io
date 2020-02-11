@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Button } from 'reactstrap';
@@ -24,7 +23,33 @@ import {
   resetEnemyField,
 } from '../actions';
 
-class Multiplayer extends Component {
+import { ICell, IPlayer } from '../utils/interfaces';
+
+interface IProps {
+  player: IPlayer;
+  enemy: {
+    field: ICell[];
+  };
+  socket: any;
+  orientation: string;
+  selectedShipSize: number;
+  phase: string;
+  reset: () => void;
+  resetEnemyField: () => void;
+  selectLobby: () => void;
+  canPlayerShoot: (bool: boolean) => void;
+  placeShip: (
+    position: { x: number; y: number },
+    shipSize: number,
+    orientation: string,
+    availableShips: {}
+  ) => void;
+  setBattlePhase: (phase: string) => void;
+  setEnemyField: (field: any) => void;
+  receiveShot: (position: { x: number; y: number }) => void;
+}
+
+class Multiplayer extends Component<IProps> {
   componentDidMount() {
     const { socket } = this.props;
 
@@ -115,7 +140,7 @@ class Multiplayer extends Component {
     receiveShot(data);
 
     const targetCell = player.field.find(
-      (cell) => cell.x === data.x && cell.y === data.y && cell.hasShip
+      (cell: ICell) => cell.x === data.x && cell.y === data.y && cell.hasShip
     );
 
     if (targetCell) {
@@ -142,8 +167,9 @@ class Multiplayer extends Component {
   handleDefineWinner() {
     const { player, enemy } = this.props;
 
-    const playerHp = player.field.filter((x) => x.hasShip && !x.destroyed)
-      .length;
+    const playerHp = player.field.filter(
+      (x: ICell) => x.hasShip && !x.destroyed
+    ).length;
     const enemyHp = enemy.field.filter((x) => x.hasShip && !x.destroyed).length;
 
     if (playerHp === 0) {
@@ -161,20 +187,6 @@ class Multiplayer extends Component {
     const { setBattlePhase } = this.props;
 
     setBattlePhase('WARM_UP');
-  }
-
-  handlePlayerCellOnMouseOver(e) {
-    e.target.parentElement.className = 'cell-selected';
-  }
-
-  handlePlayerCellOnMouseLeave(e, cell) {
-    e.target.parentElement.className = cell.className;
-  }
-
-  handleEnemyCellOnMouseOver(e) {
-    if (e.target.parentElement.className === 'cell') {
-      e.target.parentElement.className = 'enemy-cell_selected';
-    }
   }
 
   handleEnemyCells(cell) {
@@ -231,7 +243,7 @@ class Multiplayer extends Component {
           <Col className='board__player-field col-md-6'>
             <h4 className='text-center'>You</h4>
             <div className='grid d-flex flex-row mb-3'>
-              {player.field.map((el) => (
+              {player.field.map((el: ICell) => (
                 <div
                   className={el.className}
                   key={`k${nanoid()}`}
@@ -246,10 +258,6 @@ class Multiplayer extends Component {
                       player.availableShips
                     )
                   }
-                  // onMouseOver={event => this.handlePlayerCellOnMouseOver(event)}
-                  // onMouseLeave={event =>
-                  //     this.handlePlayerCellOnMouseLeave(event, el)
-                  // }
                 >
                   <img src='../../src/assets/img/aspect-ratio.png' alt='' />
                 </div>
@@ -268,8 +276,6 @@ class Multiplayer extends Component {
                   data-y={cell.y}
                   role='cell'
                   onClick={() => this.handleSendShot(cell)}
-                  // onMouseOver={event => this.handleEnemyCellOnMouseOver(event)}
-                  // onMouseLeave={() => this.handleEnemyCells(cell)}
                 >
                   <img src='../../src/assets/img/aspect-ratio.png' alt='' />
                 </div>
@@ -287,7 +293,7 @@ class Multiplayer extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: any) => {
   const { mode, selectedShipSize, player, orientation, enemy, phase } = state;
 
   return {
@@ -300,17 +306,17 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
     selectLobby: () => dispatch(selectGameMode(LOBBY)),
     placeShip: (position, shipSize, orientation, availableShips) =>
       dispatch(placeShip(position, shipSize, orientation, availableShips)),
-    setBattlePhase: (phase) => dispatch(setBattlePhase(phase)),
+    setBattlePhase: (phase: string) => dispatch(setBattlePhase(phase)),
     shootAtEnemy: (position, enemyField) =>
       dispatch(shootAtEnemy(position, enemyField)),
     setEnemyField: (field) => dispatch(setEnemyField(field)),
     receiveShot: (position) => dispatch(receiveShot(position)),
-    canPlayerShoot: (bool) => dispatch(canPlayerShoot(bool)),
+    canPlayerShoot: (bool: boolean) => dispatch(canPlayerShoot(bool)),
     reset: () => dispatch(reset()),
     resetEnemyField: () => dispatch(resetEnemyField()),
   };

@@ -1,11 +1,13 @@
-const generateField = (size: number): object[] => {
-  const arr: object[][] = [];
+import { ICell } from './interfaces';
+
+const generateField = (size: number): ICell[] => {
+  const arr: ICell[][] = [];
 
   for (let row: number = 0; row < size; row++) {
     arr[row] = [];
 
     for (let col: number = 0; col < size; col++) {
-      const cell = {
+      const cell: ICell = {
         x: col,
         y: row,
         hasShip: false,

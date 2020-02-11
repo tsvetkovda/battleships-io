@@ -1,10 +1,11 @@
 const path = require('path');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.tsx',
 
   output: {
     filename: 'main.js',
@@ -21,7 +22,8 @@ module.exports = {
         rules: [
           {
             test: /\.html$/,
-            use: ['html-loader'],
+            use: 'html-loader',
+            exclude: /node_modules/,
           },
         ],
       },
@@ -32,7 +34,8 @@ module.exports = {
       },
       {
         test: /\.(ts|js)x?$/,
-        use: ['babel-loader'],
+        use: 'babel-loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.jpe?g|png|gif|svg$/,
@@ -48,7 +51,7 @@ module.exports = {
         test: /\.css|scss$/,
         exclude: /node_modules/,
         use: [
-          'style-loader',
+          { loader: MiniCssExtractPlugin.loader },
           'css-loader',
           {
             loader: 'postcss-loader',
@@ -72,6 +75,10 @@ module.exports = {
       filename: 'index.html',
       template: './src/index.html',
       removeComments: true,
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      ignoreOrder: false,
     }),
   ],
 

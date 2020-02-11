@@ -1,8 +1,6 @@
 import { combineReducers } from 'redux';
 
-import gameModeReducer from './gameModeReduces';
-import registrationReducer from './registrationReducer';
-import userSignInReducer from './userSignInReducer';
+import gameModeReducer from './gameModeReducer';
 import selectShipReducer from './selectShipReducer';
 import changeOrientationReducer from './changeOrientationReducer';
 import playerReducer from './playerFieldReducer';
@@ -13,8 +11,6 @@ import timerReducer from './timerReducer';
 
 const rootReducer = combineReducers({
   mode: gameModeReducer,
-  isRegistrationFormOpened: registrationReducer,
-  isUserSignedIn: userSignInReducer,
   selectedShipSize: selectShipReducer,
   orientation: changeOrientationReducer,
   player: playerReducer,

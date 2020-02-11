@@ -4,21 +4,17 @@ import { Button, Container, Row, Col, Input, InputGroup } from 'reactstrap';
 
 import { selectGameMode, MULTIPLAYER, setName, setRoomId } from '../actions';
 
-type Props = {
-  player: {
-    field: [];
-    availableShips: {};
-    name: string;
-    roomId: string;
-    canShoot: boolean;
-  };
-  socket: any;
-  selectMultiplayer: () => any;
-  setName: (x: string) => any;
-  setRoomId: (x: string) => any;
-};
+import { ICell, IAvailableShips, IPlayer } from '../utils/interfaces';
 
-class Lobby extends Component<Props> {
+interface IProps {
+  player: IPlayer;
+  socket: any;
+  selectMultiplayer: () => void;
+  setName: (name: string) => void;
+  setRoomId: (roomId: string) => void;
+}
+
+class Lobby extends Component<IProps> {
   handleGameCreation() {
     const { socket, player, selectMultiplayer } = this.props;
 
