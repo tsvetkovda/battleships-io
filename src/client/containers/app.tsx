@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
 
+import { LOBBY } from '../actions';
+
 import Lobby from './lobby';
 import Multiplayer from './multiplayer';
-
-import { LOBBY } from '../actions/index';
 
 const socket = io('/');
 

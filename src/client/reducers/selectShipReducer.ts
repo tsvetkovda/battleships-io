@@ -3,7 +3,7 @@ import { SELECT_SHIP } from '../actions';
 const selectShipReducer = (state = null, action) => {
   switch (action.type) {
     case SELECT_SHIP:
-      return action.size;
+      return action.shipSize;
     default:
       return state;
   }

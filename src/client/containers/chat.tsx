@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
-import { setMessage } from '../actions/index';
-
 import { IPlayer } from '../utils/interfaces';
+
+import { setMessage } from '../actions';
 
 interface IProps {
   player: IPlayer;

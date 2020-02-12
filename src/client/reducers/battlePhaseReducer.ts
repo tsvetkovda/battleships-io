@@ -1,13 +1,9 @@
-import { WAIT, WARM_UP, BATTLE } from '../actions';
+import { WAIT, WARM_UP, BATTLE, SET_BATTLE_PHASE } from '../actions';
 
 const battlePhaseReducer = (state = WAIT, action) => {
   switch (action.type) {
-    case WAIT:
-      return WAIT;
-    case WARM_UP:
-      return WARM_UP;
-    case BATTLE:
-      return BATTLE;
+    case SET_BATTLE_PHASE:
+      return action.phase;
     default:
       return state;
   }

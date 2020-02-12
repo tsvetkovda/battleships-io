@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { IPlayer } from '../utils/interfaces';
+
 import {
   decrementTimer,
   resetTimer,
   setBattlePhase,
   selectShip,
-  reset,
+  resetField,
   BATTLE,
 } from '../actions';
-
-import { IPlayer } from '../utils/interfaces';
 
 interface IProps {
   timer: number;
   player: IPlayer;
   socket: any;
   resetTimer: () => void;
-  reset: () => void;
+  resetField: () => void;
   decrementTimer: () => void;
   setBattlePhase: (phase: string) => void;
   selectShip: (shipSize: number) => void;
@@ -31,10 +31,10 @@ class Timer extends Component<IProps> {
   }
 
   componentDidMount() {
-    const { resetTimer, reset } = this.props;
+    const { resetTimer, resetField } = this.props;
 
     resetTimer();
-    reset();
+    resetField();
 
     const timerWrap = () => {
       const { decrementTimer, timer, setBattlePhase, selectShip } = this.props;
@@ -86,7 +86,7 @@ const mapDispatchToProps = (dispatch: any) => {
     resetTimer: () => dispatch(resetTimer()),
     setBattlePhase: (phase: string) => dispatch(setBattlePhase(phase)),
     selectShip: (size: number) => dispatch(selectShip(size)),
-    reset: () => dispatch(reset()),
+    resetField: () => dispatch(resetField()),
   };
 };
 

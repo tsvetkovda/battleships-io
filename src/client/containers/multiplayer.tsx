@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 import { Container, Row, Col, Button } from 'reactstrap';
 import nanoid from 'nanoid';
 
-import Chat from './chat';
-import Controls from './controls';
-import Timer from './timer';
+import { ICell, IPlayer } from '../utils/interfaces';
 
 import {
-  selectGameMode,
+  selectGamemode,
   setBattlePhase,
   LOBBY,
   WAIT,
@@ -19,11 +17,13 @@ import {
   canPlayerShoot,
   receiveShot,
   shootAtEnemy,
-  reset,
+  resetField,
   resetEnemyField,
 } from '../actions';
 
-import { ICell, IPlayer } from '../utils/interfaces';
+import Chat from './chat';
+import Controls from './controls';
+import Timer from './timer';
 
 interface IProps {
   player: IPlayer;
@@ -34,7 +34,7 @@ interface IProps {
   orientation: string;
   selectedShipSize: number;
   phase: string;
-  reset: () => void;
+  resetField: () => void;
   resetEnemyField: () => void;
   selectLobby: () => void;
   canPlayerShoot: (bool: boolean) => void;
@@ -85,24 +85,24 @@ class Multiplayer extends Component<IProps> {
       socket,
       selectLobby,
       player,
-      reset,
+      resetField,
       resetEnemyField,
       setBattlePhase,
     } = this.props;
 
     socket.emit('leaveRoom', { username: player.name, roomId: player.roomId });
 
-    reset();
+    resetField();
     resetEnemyField();
     setBattlePhase(WAIT);
     selectLobby();
   }
 
   handleOpponentLeft() {
-    const { reset, resetEnemyField, setBattlePhase } = this.props;
+    const { resetField, resetEnemyField, setBattlePhase } = this.props;
 
     setBattlePhase(WAIT);
-    reset();
+    resetField();
     resetEnemyField();
   }
 
@@ -186,7 +186,7 @@ class Multiplayer extends Component<IProps> {
   handleAllPlayersConnected() {
     const { setBattlePhase } = this.props;
 
-    setBattlePhase('WARM_UP');
+    setBattlePhase(WARM_UP);
   }
 
   handleEnemyCells(cell) {
@@ -308,7 +308,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    selectLobby: () => dispatch(selectGameMode(LOBBY)),
+    selectLobby: () => dispatch(selectGamemode(LOBBY)),
     placeShip: (position, shipSize, orientation, availableShips) =>
       dispatch(placeShip(position, shipSize, orientation, availableShips)),
     setBattlePhase: (phase: string) => dispatch(setBattlePhase(phase)),
@@ -317,7 +317,7 @@ const mapDispatchToProps = (dispatch: any) => {
     setEnemyField: (field) => dispatch(setEnemyField(field)),
     receiveShot: (position) => dispatch(receiveShot(position)),
     canPlayerShoot: (bool: boolean) => dispatch(canPlayerShoot(bool)),
-    reset: () => dispatch(reset()),
+    resetField: () => dispatch(resetField()),
     resetEnemyField: () => dispatch(resetEnemyField()),
   };
 };

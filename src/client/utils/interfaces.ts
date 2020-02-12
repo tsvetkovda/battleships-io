@@ -1,6 +1,13 @@
-export interface IPosition {
+export interface ITargetCell {
   x: number;
   y: number;
+}
+
+export interface IShipPosition {
+  position: object;
+  shipSize: number;
+  orientation: string;
+  availableShips: object;
 }
 
 export interface ICell {
@@ -20,8 +27,12 @@ export interface IAvailableShips {
   4: number;
 }
 
-export interface IPlayer {
+export interface Field {
   field: ICell[];
+}
+
+export interface IPlayer {
+  field: Field;
   availableShips: IAvailableShips;
   name: string;
   roomId: string;

@@ -4,17 +4,17 @@ import { Button, ButtonGroup, Badge } from 'reactstrap';
 
 import SelectShipButton from '../components/selectShipButton';
 
-import { selectShip, changeOrientation, reset, setRandom } from '../actions';
+import { selectShip, changeOrientation, resetField } from '../actions';
 
 interface IProps {
   orientation: string;
   changeOrientation: () => void;
-  reset: () => void;
+  resetField: () => void;
 }
 
 class Controls extends Component<IProps> {
   render() {
-    const { reset, orientation, changeOrientation } = this.props;
+    const { resetField, orientation, changeOrientation } = this.props;
 
     return (
       <ButtonGroup size='sm' className='controls mt-3'>
@@ -26,10 +26,10 @@ class Controls extends Component<IProps> {
           Rotate
           <Badge color='secondary'>{orientation}</Badge>
         </Button>
-        <Button color='secondary' outline onClick={reset}>
+        <Button color='secondary' outline onClick={resetField}>
           Reset
         </Button>
-        <Button color='secondary' outline onClick={setRandom}>
+        <Button color='secondary' outline>
           Random
         </Button>
       </ButtonGroup>
@@ -47,7 +47,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     selectShip: (size: number) => dispatch(selectShip(size)),
     changeOrientation: () => dispatch(changeOrientation()),
-    reset: () => dispatch(reset()),
+    resetField: () => dispatch(resetField()),
   };
 };
 

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Container, Row, Col, Input, InputGroup } from 'reactstrap';
 
-import { selectGameMode, MULTIPLAYER, setName, setRoomId } from '../actions';
+import { IPlayer } from '../utils/interfaces';
 
-import { ICell, IAvailableShips, IPlayer } from '../utils/interfaces';
+import { selectGamemode, MULTIPLAYER, setName, setRoomId } from '../actions';
 
 interface IProps {
   player: IPlayer;
@@ -99,7 +99,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    selectMultiplayer: () => dispatch(selectGameMode(MULTIPLAYER)),
+    selectMultiplayer: () => dispatch(selectGamemode(MULTIPLAYER)),
     setName: (name: string) => dispatch(setName(name)),
     setRoomId: (roomId: string) => dispatch(setRoomId(roomId)),
   };

@@ -7,7 +7,7 @@ import {
   PLACE_SHIP,
   HORIZONTAL,
   VERTICAL,
-  RESET,
+  RESET_FIELD,
   SET_NAME,
   SET_ROOM_ID,
   RECEIVE_SHOT,
@@ -136,7 +136,7 @@ const playerReducer = (state = initialState, action) => {
       return { ...state, field: newField };
     }
 
-    case RESET: {
+    case RESET_FIELD: {
       return {
         ...state,
         field: initialState.field,

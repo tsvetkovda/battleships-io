@@ -1,33 +1,37 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "es2017": true
   },
-  "extends": [
-    "airbnb",
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:prettier/recommended",
-    "prettier/react"
-  ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
+    "project": "tsconfig.json",
+    "tsconfigRootDir": ".",
+    "ecmaVersion": 2019,
+    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    },
-    "ecmaVersion": 2018,
-    "sourceType": "module"
+    }
   },
-  "plugins": ["react", "prettier"],
+  "plugins": ["@typescript-eslint", "react", "react-hooks", "sonarjs"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:sonarjs/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
   "rules": {
-    "no-plusplus": 0,
-    "no-shadow": 0,
-    "class-methods-use-this": 0,
-    "react/jsx-filename-extension": 0,
-    "react/prefer-stateless-function": 0,
-    "no-underscore-dangle": 0
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      { "allowTypedFunctionExpressions": false }
+    ]
   }
 }
