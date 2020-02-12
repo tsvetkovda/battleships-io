@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 
+import { Enemy, IPlayer } from '../utils/interfaces';
+
 import gameModeReducer from './gameModeReducer';
 import selectShipReducer from './selectShipReducer';
 import changeOrientationReducer from './changeOrientationReducer';
@@ -19,5 +21,14 @@ const rootReducer = combineReducers({
   message: messageReducer,
   timer: timerReducer,
 });
+
+export type ModeState = string;
+export type SelectedShipSizeState = number | null;
+export type OrientationState = string;
+export type PlayerState = IPlayer;
+export type EnemyState = Enemy;
+export type PhaseState = string;
+export type MessageState = string;
+export type TimerState = number;
 
 export default rootReducer;

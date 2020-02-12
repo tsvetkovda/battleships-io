@@ -1,13 +1,16 @@
-import { SET_MESSAGE } from '../actions';
+import { MessageState } from '../reducers';
+import { SET_MESSAGE, ControlsTypes } from '../actions';
 
-const messageReducer = (state = '', action) => {
-  switch (action.type) {
-    case SET_MESSAGE: {
-      return action.message;
-    }
-    default: {
-      return state;
-    }
+const initialState: MessageState = '';
+
+const messageReducer = (
+  state = initialState,
+  action: ControlsTypes
+): MessageState => {
+  if (action.type === SET_MESSAGE) {
+    return action.message;
+  } else {
+    return state;
   }
 };
 

@@ -27,7 +27,9 @@ export interface IAvailableShips {
   4: number;
 }
 
-export interface Field {
+export type Field = ICell[];
+
+export interface Enemy {
   field: ICell[];
 }
 

@@ -9,7 +9,7 @@ interface CanPlayerShootAction {
 
 export const SET_NAME = 'SET_NAME';
 
-interface SetNameTypeAction {
+interface SetNameAction {
   type: typeof SET_NAME;
   name: string;
 }
@@ -46,9 +46,10 @@ interface PlaceShipAction {
   availableShips: IAvailableShips;
 }
 
-export type CanPlayerShootType = CanPlayerShootAction;
-export type SetNameType = SetNameTypeAction;
-export type SetRoomIdType = SetRoomIdAction;
-export type ResetFieldType = ResetFieldAction;
-export type ReceiveShotType = ReceiveShotAction;
-export type PlaceShipType = PlaceShipAction;
+export type PlayerTypes =
+  | CanPlayerShootAction
+  | SetNameAction
+  | SetRoomIdAction
+  | ResetFieldAction
+  | ReceiveShotAction
+  | PlaceShipAction;

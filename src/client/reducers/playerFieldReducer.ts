@@ -1,7 +1,7 @@
 import cloneDeep from '../utils/cloneDeep';
 import generateField from '../utils/generateField';
-import lockedCells from '../utils/lockedCells';
 import generateRoomId from '../utils/generateRoomId';
+import lockedCells from '../utils/lockedCells';
 
 import {
   PLACE_SHIP,
@@ -12,32 +12,14 @@ import {
   SET_ROOM_ID,
   RECEIVE_SHOT,
   CAN_PLAYER_SHOOT,
+  PlayerTypes,
 } from '../actions';
 
-interface State {
-  field: object[];
-  availableShips: {
-    1: number;
-    2: number;
-    3: number;
-    4: number;
-    name: string;
-    roomId: string;
-    canShoot: boolean;
-  };
-}
+import { ICell, IPlayer } from '../utils/interfaces';
 
-interface Cell {
-  x: number;
-  y: number;
-  hasShip: boolean;
-  locked: boolean;
-  destroyed: boolean;
-  missed: boolean;
-  className: string;
-}
+import { PlayerState } from './index';
 
-const initialState = {
+const initialState: PlayerState = {
   field: generateField(10),
   availableShips: { 1: 4, 2: 3, 3: 2, 4: 1 },
   name: '',
@@ -45,18 +27,21 @@ const initialState = {
   canShoot: false,
 };
 
-const playerReducer = (state = initialState, action) => {
+const playerReducer = (
+  state = initialState,
+  action: PlayerTypes
+): PlayerState => {
   switch (action.type) {
     case PLACE_SHIP: {
       const { position, orientation, shipSize } = action;
 
-      const newState: State = cloneDeep(state);
+      const newState: IPlayer = cloneDeep(state);
       const occupiedCells = [];
 
       for (let i = 0; i < shipSize; i++) {
         if (orientation === HORIZONTAL) {
           const x = newState.field.find(
-            (cell: Cell) =>
+            (cell: ICell) =>
               cell.x === position.x + i &&
               cell.y === position.y &&
               !(cell.locked || cell.hasShip)
@@ -67,7 +52,7 @@ const playerReducer = (state = initialState, action) => {
 
         if (orientation === VERTICAL) {
           const x = newState.field.find(
-            (cell: Cell) =>
+            (cell: ICell) =>
               cell.x === position.x &&
               cell.y === position.y + i &&
               !(cell.locked || cell.hasShip)
@@ -83,7 +68,7 @@ const playerReducer = (state = initialState, action) => {
       ) {
         occupiedCells.forEach((el) => {
           lockedCells.forEach((lock: { x: number; y: number }) => {
-            newState.field.forEach((val: Cell) => {
+            newState.field.forEach((val: ICell) => {
               if (val.x === el.x + lock.x && val.y === el.y + lock.y) {
                 val.className = 'cell-locked';
                 val.locked = true;
@@ -97,10 +82,10 @@ const playerReducer = (state = initialState, action) => {
         occupiedCells.length === shipSize &&
         newState.availableShips[shipSize] > 0
       ) {
-        newState.field.forEach((el: Cell) => {
+        newState.field.forEach((el: ICell) => {
           if (
             occupiedCells.some(
-              (cell: Cell) => cell.x === el.x && cell.y === el.y
+              (cell: ICell) => cell.x === el.x && cell.y === el.y
             )
           ) {
             el.hasShip = true;
@@ -121,8 +106,8 @@ const playerReducer = (state = initialState, action) => {
       const { cell } = action;
 
       const newField = cloneDeep(state.field);
-      const targetCell: Cell = newField.find(
-        (el: Cell) => el.x === cell.x && el.y === cell.y
+      const targetCell: ICell = newField.find(
+        (el: ICell) => el.x === cell.x && el.y === cell.y
       );
 
       if (targetCell && targetCell.hasShip) {

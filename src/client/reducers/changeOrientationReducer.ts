@@ -1,11 +1,21 @@
-import { CHANGE_ORIENTATION, HORIZONTAL, VERTICAL } from '../actions';
+import { OrientationState } from '../reducers';
+import {
+  CHANGE_ORIENTATION,
+  HORIZONTAL,
+  VERTICAL,
+  ControlsTypes,
+} from '../actions';
 
-const changeOrientationReducer = (state = HORIZONTAL, action) => {
-  switch (action.type) {
-    case CHANGE_ORIENTATION:
-      return state === HORIZONTAL ? VERTICAL : HORIZONTAL;
-    default:
-      return state;
+const initialState: OrientationState = HORIZONTAL;
+
+const changeOrientationReducer = (
+  state = initialState,
+  action: ControlsTypes
+): OrientationState => {
+  if (action.type === CHANGE_ORIENTATION) {
+    return state === HORIZONTAL ? VERTICAL : HORIZONTAL;
+  } else {
+    return state;
   }
 };
 

@@ -48,9 +48,11 @@ interface SetBattlePhaseAction {
   phase: string;
 }
 
-export type ChangeOrientationType = ChangeOrientationAction;
-export type SelectGamemodeType = SelectGamemodeAction;
-export type TimerTypes = DecrementTimerAction | ResetTimerAction;
-export type SelectShipType = SelectShipAction;
-export type SetMessageType = SetMessageAction;
-export type SetBattlePhaseType = SetBattlePhaseAction;
+export type ControlsTypes =
+  | ChangeOrientationAction
+  | SelectGamemodeAction
+  | DecrementTimerAction
+  | ResetTimerAction
+  | SelectShipAction
+  | SetMessageAction
+  | SetBattlePhaseAction;

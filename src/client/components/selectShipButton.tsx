@@ -4,7 +4,11 @@ import { Button, Badge } from 'reactstrap';
 
 import { selectShip } from '../actions/index';
 
-const SelectShipButton = (props: any) => {
+interface Props {
+  shipSize: number;
+}
+
+const SelectShipButton = (props: Props): JSX.Element => {
   const { shipSize } = props;
 
   const availableShips = useSelector((state) => state.player.availableShips);

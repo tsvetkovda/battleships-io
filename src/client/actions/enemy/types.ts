@@ -21,6 +21,7 @@ interface ResetEnemyFieldAction {
   type: typeof RESET_ENEMY_FIELD;
 }
 
-export type ShootAtEnemyType = ShootAtEnemyAction;
-export type SetEnemyFieldType = SetEnemyFieldAction;
-export type ResetEnemyFieldType = ResetEnemyFieldAction;
+export type EnemyTypes =
+  | ShootAtEnemyAction
+  | SetEnemyFieldAction
+  | ResetEnemyFieldAction;

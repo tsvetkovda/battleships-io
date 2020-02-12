@@ -1,8 +1,12 @@
-import { DECREMENT_TIMER, RESET_TIMER } from '../actions';
+import { TimerState } from '../reducers';
+import { DECREMENT_TIMER, RESET_TIMER, ControlsTypes } from '../actions';
 
-const initialState = 60;
+const initialState: TimerState = 60;
 
-const timerReducer = (state = initialState, action) => {
+const timerReducer = (
+  state = initialState,
+  action: ControlsTypes
+): TimerState => {
   switch (action.type) {
     case DECREMENT_TIMER:
       return state - 1;

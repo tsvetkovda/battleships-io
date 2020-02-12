@@ -2,27 +2,25 @@ import { ITargetCell, Field } from '../../utils/interfaces';
 
 import {
   SHOOT_AT_ENEMY,
-  ShootAtEnemyType,
   SET_ENEMY_FIELD,
-  SetEnemyFieldType,
   RESET_ENEMY_FIELD,
-  ResetEnemyFieldType,
+  EnemyTypes,
 } from './types';
 
 export const shootAtEnemy = (
   position: ITargetCell,
   enemyField: Field
-): ShootAtEnemyType => ({
+): EnemyTypes => ({
   type: SHOOT_AT_ENEMY,
   position,
   enemyField,
 });
 
-export const setEnemyField = (field: Field): SetEnemyFieldType => ({
+export const setEnemyField = (field: Field): EnemyTypes => ({
   type: SET_ENEMY_FIELD,
   field,
 });
 
-export const resetEnemyField = (): ResetEnemyFieldType => ({
+export const resetEnemyField = (): EnemyTypes => ({
   type: RESET_ENEMY_FIELD,
 });
