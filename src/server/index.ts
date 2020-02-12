@@ -1,10 +1,10 @@
-export {};
-
-const express = require('express');
+import express from 'express';
+import http from 'http';
+import socket from 'socket.io';
 
 const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const server = http.createServer(app);
+const io = socket(server);
 
 const port = process.env.PORT || 3000;
 
