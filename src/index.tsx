@@ -5,9 +5,9 @@ import { Provider } from 'react-redux';
 
 import './scss/index.scss';
 
-import App from './js/containers/app';
+import App from './client/containers/app';
 
-import rootReducer from './js/reducers/index';
+import rootReducer from './client/reducers/index';
 
 const store = createStore(
   rootReducer,

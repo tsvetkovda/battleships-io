@@ -3,9 +3,9 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
-import App from '../js/app';
+import App from '../client/containers/app';
 
-function sum(a, b) {
+function sum(a: number, b: number) {
   return a + b;
 }
 
