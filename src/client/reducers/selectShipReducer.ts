@@ -3,10 +3,7 @@ import { SELECT_SHIP, ControlsTypes } from '../actions';
 
 const initialState: SelectedShipSizeState = null;
 
-const selectShipReducer = (
-  state = initialState,
-  action: ControlsTypes
-): SelectedShipSizeState => {
+const selectShipReducer = (state = initialState, action: ControlsTypes): SelectedShipSizeState => {
   if (action.type === SELECT_SHIP) {
     return action.shipSize;
   } else {

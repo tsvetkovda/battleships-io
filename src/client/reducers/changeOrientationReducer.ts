@@ -1,10 +1,5 @@
 import { OrientationState } from '../reducers';
-import {
-  CHANGE_ORIENTATION,
-  HORIZONTAL,
-  VERTICAL,
-  ControlsTypes,
-} from '../actions';
+import { CHANGE_ORIENTATION, HORIZONTAL, VERTICAL, ControlsTypes } from '../actions';
 
 const initialState: OrientationState = HORIZONTAL;
 

@@ -34,10 +34,8 @@ class Chat extends Component<Props> {
   componentWillUnmount(): void {
     const { socket } = this.props;
 
-    socket.removeEventListener(
-      'chatMsg',
-      (data: { username: string; msg: string }): void =>
-        this.handleReceiveMessage(data)
+    socket.removeEventListener('chatMsg', (data: { username: string; msg: string }): void =>
+      this.handleReceiveMessage(data)
     );
   }
 
@@ -45,9 +43,7 @@ class Chat extends Component<Props> {
     if (data) {
       const div = document.createElement('div');
 
-      document
-        .querySelector('.chat')
-        .append(`${data.username}: ${data.msg}`, div);
+      document.querySelector('.chat').append(`${data.username}: ${data.msg}`, div);
     }
   }
 
@@ -66,10 +62,7 @@ class Chat extends Component<Props> {
       <>
         <div className='chat' />
         <InputGroup>
-          <Input
-            onChange={(event): void => setMessage(event.target.value)}
-            value={message}
-          />
+          <Input onChange={(event): void => setMessage(event.target.value)} value={message} />
           <InputGroupAddon addonType='append'>
             <Button onClick={(): void => this.handleSendMessage()}>Send</Button>
           </InputGroupAddon>

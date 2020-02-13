@@ -29,10 +29,7 @@ const initialState: PlayerState = {
 };
 
 // TODO: Refactor
-const playerReducer = (
-  state = initialState,
-  action: PlayerTypes
-): PlayerState => {
+const playerReducer = (state = initialState, action: PlayerTypes): PlayerState => {
   switch (action.type) {
     case PLACE_SHIP: {
       const { position, orientation, shipSize } = action;
@@ -44,9 +41,7 @@ const playerReducer = (
         if (orientation === HORIZONTAL) {
           const x = newState.field.find(
             (cell): boolean =>
-              cell.x === position.x + i &&
-              cell.y === position.y &&
-              !(cell.locked || cell.hasShip)
+              cell.x === position.x + i && cell.y === position.y && !(cell.locked || cell.hasShip)
           );
 
           if (x !== undefined) occupiedCells.push(x);
@@ -55,19 +50,14 @@ const playerReducer = (
         if (orientation === VERTICAL) {
           const x = newState.field.find(
             (cell): boolean =>
-              cell.x === position.x &&
-              cell.y === position.y + i &&
-              !(cell.locked || cell.hasShip)
+              cell.x === position.x && cell.y === position.y + i && !(cell.locked || cell.hasShip)
           );
 
           if (x !== undefined) occupiedCells.push(x);
         }
       }
 
-      if (
-        occupiedCells.length === shipSize &&
-        newState.availableShips[shipSize] > 0
-      ) {
+      if (occupiedCells.length === shipSize && newState.availableShips[shipSize] > 0) {
         occupiedCells.forEach((el): void => {
           lockedCells.forEach((lock: { x: number; y: number }): void => {
             newState.field.forEach((val: ICell): void => {
@@ -80,16 +70,9 @@ const playerReducer = (
         });
       }
 
-      if (
-        occupiedCells.length === shipSize &&
-        newState.availableShips[shipSize] > 0
-      ) {
+      if (occupiedCells.length === shipSize && newState.availableShips[shipSize] > 0) {
         newState.field.forEach((el: ICell): void => {
-          if (
-            occupiedCells.some(
-              (cell): boolean => cell.x === el.x && cell.y === el.y
-            )
-          ) {
+          if (occupiedCells.some((cell): boolean => cell.x === el.x && cell.y === el.y)) {
             el.hasShip = true;
             el.className = 'cell-occupied';
           }
@@ -108,9 +91,7 @@ const playerReducer = (
       const { cell } = action;
 
       const newField = cloneDeep(state.field);
-      const targetCell = newField.find(
-        (el): boolean => el.x === cell.x && el.y === cell.y
-      );
+      const targetCell = newField.find((el): boolean => el.x === cell.x && el.y === cell.y);
 
       if (targetCell && targetCell.hasShip) {
         targetCell.destroyed = true;

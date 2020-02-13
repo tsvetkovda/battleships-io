@@ -3,15 +3,9 @@ import { connect } from 'react-redux';
 import { Container, Row, Col, Button } from 'reactstrap';
 import nanoid from 'nanoid';
 
-import { RootState } from '../reducers';
+import { ICell, IPlayer, Field, ITargetCell, IAvailableShips } from '../utils/interfaces';
 
-import {
-  ICell,
-  IPlayer,
-  Field,
-  ITargetCell,
-  IAvailableShips,
-} from '../utils/interfaces';
+import { RootState } from '../reducers';
 
 import {
   selectGamemode,
@@ -69,48 +63,27 @@ class Multiplayer extends Component<Props> {
   componentDidMount(): void {
     const { socket } = this.props;
 
-    socket.on('allPlayersConnected', (): void =>
-      this.handleAllPlayersConnected()
-    );
+    socket.on('allPlayersConnected', (): void => this.handleAllPlayersConnected());
     socket.on('playerLeft', (): void => this.handleOpponentLeft());
-    socket.on('sendDataToOpponent', (data): void =>
-      this.handleReceiveOpponentData(data)
-    );
+    socket.on('sendDataToOpponent', (data): void => this.handleReceiveOpponentData(data));
     socket.on('sendShot', (data): void => this.handleReceiveShot(data));
-    socket.on('defineFirstTurn', (name): void =>
-      this.handleDefineFirstTurn(name)
-    );
+    socket.on('defineFirstTurn', (name): void => this.handleDefineFirstTurn(name));
   }
 
   componentWillUnmount(): void {
     const { socket } = this.props;
 
-    socket.removeEventListener('allPlayersConnected', (): void =>
-      this.handleAllPlayersConnected()
-    );
-    socket.removeEventListener('playerLeft', (): void =>
-      this.handleOpponentLeft()
-    );
+    socket.removeEventListener('allPlayersConnected', (): void => this.handleAllPlayersConnected());
+    socket.removeEventListener('playerLeft', (): void => this.handleOpponentLeft());
     socket.removeEventListener('sendDataToOpponent', (data): void =>
       this.handleReceiveOpponentData(data)
     );
-    socket.removeEventListener('sendShot', (data): void =>
-      this.handleReceiveShot(data)
-    );
-    socket.removeEventListener('defineFirstTurn', (name): void =>
-      this.handleDefineFirstTurn(name)
-    );
+    socket.removeEventListener('sendShot', (data): void => this.handleReceiveShot(data));
+    socket.removeEventListener('defineFirstTurn', (name): void => this.handleDefineFirstTurn(name));
   }
 
   handleLeaveRoom(): void {
-    const {
-      socket,
-      selectLobby,
-      player,
-      resetField,
-      resetEnemyField,
-      setBattlePhase,
-    } = this.props;
+    const { socket, selectLobby, player, resetField, resetEnemyField, setBattlePhase } = this.props;
 
     socket.emit('leaveRoom', { username: player.name, roomId: player.roomId });
 
@@ -139,9 +112,7 @@ class Multiplayer extends Component<Props> {
   handleSendShot(cell): void {
     const { socket, phase, player, enemy, canPlayerShoot } = this.props;
 
-    const targetCell = enemy.field.find(
-      (el): boolean => el.x === cell.x && el.y === cell.y
-    );
+    const targetCell = enemy.field.find((el): boolean => el.x === cell.x && el.y === cell.y);
 
     if (player.canShoot && phase === BATTLE) {
       if (!targetCell.destroyed && !targetCell.missed) {
@@ -189,12 +160,8 @@ class Multiplayer extends Component<Props> {
   handleDefineWinner(): string {
     const { player, enemy } = this.props;
 
-    const playerHp = player.field.filter(
-      (x): boolean => x.hasShip && !x.destroyed
-    ).length;
-    const enemyHp = enemy.field.filter(
-      (x): boolean => x.hasShip && !x.destroyed
-    ).length;
+    const playerHp = player.field.filter((x): boolean => x.hasShip && !x.destroyed).length;
+    const enemyHp = enemy.field.filter((x): boolean => x.hasShip && !x.destroyed).length;
 
     if (playerHp === 0) {
       return 'You lose';
@@ -222,15 +189,7 @@ class Multiplayer extends Component<Props> {
   }
 
   render(): JSX.Element {
-    const {
-      selectedShipSize,
-      orientation,
-      placeShip,
-      player,
-      enemy,
-      phase,
-      socket,
-    } = this.props;
+    const { selectedShipSize, orientation, placeShip, player, enemy, phase, socket } = this.props;
 
     let Header;
 
@@ -255,10 +214,7 @@ class Multiplayer extends Component<Props> {
       <Container>
         <Row className='mb-3 mt-3'>
           <Col>
-            <Button
-              onClick={(): void => this.handleLeaveRoom()}
-              color='primary'
-            >
+            <Button onClick={(): void => this.handleLeaveRoom()} color='primary'>
               Back to lobby
             </Button>
           </Col>
@@ -340,12 +296,7 @@ const mapStateToProps = (state: RootState): StateProps => {
 const mapDispatchToProps = (dispatch): DispatchProps => {
   return {
     selectLobby: (): void => dispatch(selectGamemode(LOBBY)),
-    placeShip: (
-      position,
-      shipSize,
-      orientation,
-      availableShips: IAvailableShips
-    ): void =>
+    placeShip: (position, shipSize, orientation, availableShips: IAvailableShips): void =>
       dispatch(placeShip(position, shipSize, orientation, availableShips)),
     setBattlePhase: (phase: string): void => dispatch(setBattlePhase(phase)),
     setEnemyField: (field): void => dispatch(setEnemyField(field)),

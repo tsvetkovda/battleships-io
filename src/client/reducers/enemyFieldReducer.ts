@@ -3,21 +3,13 @@ import generateField from '../utils/generateField';
 
 import { EnemyState } from '../reducers';
 
-import {
-  SHOOT_AT_ENEMY,
-  SET_ENEMY_FIELD,
-  RESET_ENEMY_FIELD,
-  EnemyTypes,
-} from '../actions';
+import { SHOOT_AT_ENEMY, SET_ENEMY_FIELD, RESET_ENEMY_FIELD, EnemyTypes } from '../actions';
 
 const initialState: EnemyState = {
   field: generateField(10),
 };
 
-const enemyFieldReducer = (
-  state = initialState,
-  action: EnemyTypes
-): EnemyState => {
+const enemyFieldReducer = (state = initialState, action: EnemyTypes): EnemyState => {
   switch (action.type) {
     case SHOOT_AT_ENEMY: {
       const { position } = action;

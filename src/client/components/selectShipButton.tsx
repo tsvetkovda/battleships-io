@@ -16,9 +16,7 @@ const SelectShipButton = (props: Props): JSX.Element => {
   const availableShips = useSelector(
     (state: RootState): IAvailableShips => state.player.availableShips
   );
-  const selectedShipSize = useSelector(
-    (state: RootState): number => state.selectedShipSize
-  );
+  const selectedShipSize = useSelector((state: RootState): number => state.selectedShipSize);
 
   const badgeColor = availableShips[shipSize] > 0 ? 'secondary' : 'danger';
   const innerHtml = `Size: ${shipSize}`;
