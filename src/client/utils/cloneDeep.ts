@@ -1,3 +1,3 @@
-const cloneDeep = (arr) => JSON.parse(JSON.stringify(arr));
+const cloneDeep = (x): any => JSON.parse(JSON.stringify(x));
 
 export default cloneDeep;

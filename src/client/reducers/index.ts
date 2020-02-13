@@ -22,6 +22,8 @@ const rootReducer = combineReducers({
   timer: timerReducer,
 });
 
+export type RootState = ReturnType<typeof rootReducer>;
+
 export type ModeState = string;
 export type SelectedShipSizeState = number | null;
 export type OrientationState = string;

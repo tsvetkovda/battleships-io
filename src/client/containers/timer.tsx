@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IPlayer } from '../utils/interfaces';
+import { RootState } from '../reducers';
 
 import {
   decrementTimer,
@@ -12,10 +13,16 @@ import {
   BATTLE,
 } from '../actions';
 
-interface IProps {
+interface OwnProps {
+  socket: SocketIOClient.Socket;
+}
+
+interface StateProps {
   timer: number;
   player: IPlayer;
-  socket: any;
+}
+
+interface DispatchProps {
   resetTimer: () => void;
   resetField: () => void;
   decrementTimer: () => void;
@@ -23,20 +30,22 @@ interface IProps {
   selectShip: (shipSize: number) => void;
 }
 
-class Timer extends Component<IProps> {
-  constructor(props) {
+type Props = OwnProps & StateProps & DispatchProps;
+
+class Timer extends Component<Props> {
+  constructor(props: Props) {
     super(props);
 
     this.timerId = null;
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     const { resetTimer, resetField } = this.props;
 
     resetTimer();
     resetField();
 
-    const timerWrap = () => {
+    const timerWrap = (): void => {
       const { decrementTimer, timer, setBattlePhase, selectShip } = this.props;
 
       // eslint-disable-next-line eqeqeq
@@ -45,7 +54,7 @@ class Timer extends Component<IProps> {
 
         selectShip(null);
         this.handleSendDataToOpponent();
-        setTimeout(() => setBattlePhase(BATTLE), 1000);
+        setTimeout((): void => setBattlePhase(BATTLE), 1000);
       } else {
         decrementTimer();
       }
@@ -54,24 +63,24 @@ class Timer extends Component<IProps> {
     this.timerId = setInterval(timerWrap, 1000);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     clearInterval(this.timerId);
   }
 
-  handleSendDataToOpponent() {
+  handleSendDataToOpponent(): void {
     const { socket, player } = this.props;
 
     socket.emit('sendDataToOpponent', player.field);
   }
 
-  render() {
+  render(): JSX.Element {
     const { timer } = this.props;
 
     return <div className='timer'>{timer}</div>;
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState): StateProps => {
   const { timer, player } = state;
 
   return {
@@ -80,13 +89,13 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch): DispatchProps => {
   return {
-    decrementTimer: () => dispatch(decrementTimer()),
-    resetTimer: () => dispatch(resetTimer()),
-    setBattlePhase: (phase: string) => dispatch(setBattlePhase(phase)),
-    selectShip: (size: number) => dispatch(selectShip(size)),
-    resetField: () => dispatch(resetField()),
+    decrementTimer: (): void => dispatch(decrementTimer()),
+    resetTimer: (): void => dispatch(resetTimer()),
+    setBattlePhase: (phase: string): void => dispatch(setBattlePhase(phase)),
+    selectShip: (size: number): void => dispatch(selectShip(size)),
+    resetField: (): void => dispatch(resetField()),
   };
 };
 

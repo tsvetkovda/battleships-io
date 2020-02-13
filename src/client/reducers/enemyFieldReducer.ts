@@ -24,9 +24,9 @@ const enemyFieldReducer = (
 
       const newField = cloneDeep(state.field);
 
-      const targetCell = newField.find(
-        (cell) => cell.x === position.x && cell.y === position.y
-      );
+      const targetCell = newField.find((cell): void => {
+        cell.x === position.x && cell.y === position.y;
+      });
 
       if (targetCell && targetCell.hasShip) {
         targetCell.destroyed = true;

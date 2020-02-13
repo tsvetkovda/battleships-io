@@ -3,7 +3,15 @@ import { connect } from 'react-redux';
 import { Container, Row, Col, Button } from 'reactstrap';
 import nanoid from 'nanoid';
 
-import { ICell, IPlayer } from '../utils/interfaces';
+import { RootState } from '../reducers';
+
+import {
+  ICell,
+  IPlayer,
+  Field,
+  ITargetCell,
+  IAvailableShips,
+} from '../utils/interfaces';
 
 import {
   selectGamemode,
@@ -16,7 +24,6 @@ import {
   setEnemyField,
   canPlayerShoot,
   receiveShot,
-  shootAtEnemy,
   resetField,
   resetEnemyField,
 } from '../actions';
@@ -25,62 +32,77 @@ import Chat from './chat';
 import Controls from './controls';
 import Timer from './timer';
 
-interface IProps {
+interface OwnProps {
+  socket: SocketIOClient.Socket;
+}
+
+interface StateProps {
+  mode: string;
   player: IPlayer;
   enemy: {
     field: ICell[];
   };
-  socket: any;
   orientation: string;
   selectedShipSize: number;
   phase: string;
+}
+
+interface DispatchProps {
   resetField: () => void;
   resetEnemyField: () => void;
   selectLobby: () => void;
   canPlayerShoot: (bool: boolean) => void;
   placeShip: (
-    position: { x: number; y: number },
+    position: ITargetCell,
     shipSize: number,
     orientation: string,
-    availableShips: {}
+    availableShips: IAvailableShips
   ) => void;
   setBattlePhase: (phase: string) => void;
-  setEnemyField: (field: any) => void;
-  receiveShot: (position: { x: number; y: number }) => void;
+  setEnemyField: (field: Field) => void;
+  receiveShot: (position: ITargetCell) => void;
 }
 
-class Multiplayer extends Component<IProps> {
-  componentDidMount() {
+type Props = OwnProps & StateProps & DispatchProps;
+
+class Multiplayer extends Component<Props> {
+  componentDidMount(): void {
     const { socket } = this.props;
 
-    socket.on('allPlayersConnected', () => this.handleAllPlayersConnected());
-    socket.on('playerLeft', () => this.handleOpponentLeft());
-    socket.on('sendDataToOpponent', (data) =>
-      this.handleReceiveOpponentData(data)
-    );
-    socket.on('sendShot', (data) => this.handleReceiveShot(data));
-    socket.on('defineFirstTurn', (name) => this.handleDefineFirstTurn(name));
-  }
-
-  componentWillUnmount() {
-    const { socket } = this.props;
-
-    socket.removeEventListener('allPlayersConnected', () =>
+    socket.on('allPlayersConnected', (): void =>
       this.handleAllPlayersConnected()
     );
-    socket.removeEventListener('playerLeft', () => this.handleOpponentLeft());
-    socket.removeEventListener('sendDataToOpponent', (data) =>
+    socket.on('playerLeft', (): void => this.handleOpponentLeft());
+    socket.on('sendDataToOpponent', (data): void =>
       this.handleReceiveOpponentData(data)
     );
-    socket.removeEventListener('sendShot', (data) =>
-      this.handleReceiveShot(data)
-    );
-    socket.removeEventListener('defineFirstTurn', (name) =>
+    socket.on('sendShot', (data): void => this.handleReceiveShot(data));
+    socket.on('defineFirstTurn', (name): void =>
       this.handleDefineFirstTurn(name)
     );
   }
 
-  handleLeaveRoom() {
+  componentWillUnmount(): void {
+    const { socket } = this.props;
+
+    socket.removeEventListener('allPlayersConnected', (): void =>
+      this.handleAllPlayersConnected()
+    );
+    socket.removeEventListener('playerLeft', (): void =>
+      this.handleOpponentLeft()
+    );
+    socket.removeEventListener('sendDataToOpponent', (data): void =>
+      this.handleReceiveOpponentData(data)
+    );
+    socket.removeEventListener('sendShot', (data): void =>
+      this.handleReceiveShot(data)
+    );
+    socket.removeEventListener('defineFirstTurn', (name): void =>
+      this.handleDefineFirstTurn(name)
+    );
+  }
+
+  handleLeaveRoom(): void {
     const {
       socket,
       selectLobby,
@@ -98,7 +120,7 @@ class Multiplayer extends Component<IProps> {
     selectLobby();
   }
 
-  handleOpponentLeft() {
+  handleOpponentLeft(): void {
     const { resetField, resetEnemyField, setBattlePhase } = this.props;
 
     setBattlePhase(WAIT);
@@ -106,7 +128,7 @@ class Multiplayer extends Component<IProps> {
     resetEnemyField();
   }
 
-  handleDefineFirstTurn(name) {
+  handleDefineFirstTurn(name): void {
     const { player, canPlayerShoot } = this.props;
 
     if (player.name === name) {
@@ -114,11 +136,11 @@ class Multiplayer extends Component<IProps> {
     }
   }
 
-  handleSendShot(cell) {
+  handleSendShot(cell): void {
     const { socket, phase, player, enemy, canPlayerShoot } = this.props;
 
     const targetCell = enemy.field.find(
-      (el) => el.x === cell.x && el.y === cell.y
+      (el): boolean => el.x === cell.x && el.y === cell.y
     );
 
     if (player.canShoot && phase === BATTLE) {
@@ -134,13 +156,13 @@ class Multiplayer extends Component<IProps> {
     }
   }
 
-  handleReceiveShot(data) {
+  handleReceiveShot(data): void {
     const { receiveShot, canPlayerShoot, player } = this.props;
 
     receiveShot(data);
 
     const targetCell = player.field.find(
-      (cell: ICell) => cell.x === data.x && cell.y === data.y && cell.hasShip
+      (cell): boolean => cell.x === data.x && cell.y === data.y && cell.hasShip
     );
 
     if (targetCell) {
@@ -152,25 +174,27 @@ class Multiplayer extends Component<IProps> {
     this.handleSendDataToOpponent();
   }
 
-  handleReceiveOpponentData(data) {
+  handleReceiveOpponentData(data): void {
     const { setEnemyField } = this.props;
 
     setEnemyField(data);
   }
 
-  handleSendDataToOpponent() {
+  handleSendDataToOpponent(): void {
     const { socket, player } = this.props;
 
     socket.emit('sendDataToOpponent', player.field);
   }
 
-  handleDefineWinner() {
+  handleDefineWinner(): string {
     const { player, enemy } = this.props;
 
     const playerHp = player.field.filter(
-      (x: ICell) => x.hasShip && !x.destroyed
+      (x): boolean => x.hasShip && !x.destroyed
     ).length;
-    const enemyHp = enemy.field.filter((x) => x.hasShip && !x.destroyed).length;
+    const enemyHp = enemy.field.filter(
+      (x): boolean => x.hasShip && !x.destroyed
+    ).length;
 
     if (playerHp === 0) {
       return 'You lose';
@@ -183,13 +207,13 @@ class Multiplayer extends Component<IProps> {
     return player.canShoot ? 'You turn' : 'Enemy Turn';
   }
 
-  handleAllPlayersConnected() {
+  handleAllPlayersConnected(): void {
     const { setBattlePhase } = this.props;
 
     setBattlePhase(WARM_UP);
   }
 
-  handleEnemyCells(cell) {
+  handleEnemyCells(cell): string {
     if (cell.destroyed) return 'enemy-cell_destroyed';
 
     if (cell.missed) return 'cell-missed';
@@ -197,7 +221,7 @@ class Multiplayer extends Component<IProps> {
     return 'cell';
   }
 
-  render() {
+  render(): JSX.Element {
     const {
       selectedShipSize,
       orientation,
@@ -231,7 +255,10 @@ class Multiplayer extends Component<IProps> {
       <Container>
         <Row className='mb-3 mt-3'>
           <Col>
-            <Button onClick={() => this.handleLeaveRoom()} color='primary'>
+            <Button
+              onClick={(): void => this.handleLeaveRoom()}
+              color='primary'
+            >
               Back to lobby
             </Button>
           </Col>
@@ -243,43 +270,47 @@ class Multiplayer extends Component<IProps> {
           <Col className='board__player-field col-md-6'>
             <h4 className='text-center'>You</h4>
             <div className='grid d-flex flex-row mb-3'>
-              {player.field.map((el: ICell) => (
-                <div
-                  className={el.className}
-                  key={`k${nanoid()}`}
-                  data-x={el.x}
-                  data-y={el.y}
-                  role='cell'
-                  onClick={() =>
-                    placeShip(
-                      { x: el.x, y: el.y },
-                      selectedShipSize,
-                      orientation,
-                      player.availableShips
-                    )
-                  }
-                >
-                  <img src='../../src/assets/img/aspect-ratio.png' alt='' />
-                </div>
-              ))}
+              {player.field.map(
+                (el: ICell): JSX.Element => (
+                  <div
+                    className={el.className}
+                    key={`k${nanoid()}`}
+                    data-x={el.x}
+                    data-y={el.y}
+                    role='cell'
+                    onClick={(): void =>
+                      placeShip(
+                        { x: el.x, y: el.y },
+                        selectedShipSize,
+                        orientation,
+                        player.availableShips
+                      )
+                    }
+                  >
+                    <img src='../../src/assets/img/aspect-ratio.png' alt='' />
+                  </div>
+                )
+              )}
             </div>
             {phase === WARM_UP ? <Controls /> : null}
           </Col>
           <Col className='board__enemy-field col-md-6'>
             <h4 className='text-center'>Enemy</h4>
             <div className='grid d-flex flex-row'>
-              {enemy.field.map((cell) => (
-                <div
-                  className={this.handleEnemyCells(cell)}
-                  key={`k${nanoid()}`}
-                  data-x={cell.x}
-                  data-y={cell.y}
-                  role='cell'
-                  onClick={() => this.handleSendShot(cell)}
-                >
-                  <img src='../../src/assets/img/aspect-ratio.png' alt='' />
-                </div>
-              ))}
+              {enemy.field.map(
+                (cell): JSX.Element => (
+                  <div
+                    className={this.handleEnemyCells(cell)}
+                    key={`k${nanoid()}`}
+                    data-x={cell.x}
+                    data-y={cell.y}
+                    role='cell'
+                    onClick={(): void => this.handleSendShot(cell)}
+                  >
+                    <img src='../../src/assets/img/aspect-ratio.png' alt='' />
+                  </div>
+                )
+              )}
             </div>
           </Col>
         </Row>
@@ -293,7 +324,7 @@ class Multiplayer extends Component<IProps> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState): StateProps => {
   const { mode, selectedShipSize, player, orientation, enemy, phase } = state;
 
   return {
@@ -306,19 +337,22 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch): DispatchProps => {
   return {
-    selectLobby: () => dispatch(selectGamemode(LOBBY)),
-    placeShip: (position, shipSize, orientation, availableShips) =>
+    selectLobby: (): void => dispatch(selectGamemode(LOBBY)),
+    placeShip: (
+      position,
+      shipSize,
+      orientation,
+      availableShips: IAvailableShips
+    ): void =>
       dispatch(placeShip(position, shipSize, orientation, availableShips)),
-    setBattlePhase: (phase: string) => dispatch(setBattlePhase(phase)),
-    shootAtEnemy: (position, enemyField) =>
-      dispatch(shootAtEnemy(position, enemyField)),
-    setEnemyField: (field) => dispatch(setEnemyField(field)),
-    receiveShot: (position) => dispatch(receiveShot(position)),
-    canPlayerShoot: (bool: boolean) => dispatch(canPlayerShoot(bool)),
-    resetField: () => dispatch(resetField()),
-    resetEnemyField: () => dispatch(resetEnemyField()),
+    setBattlePhase: (phase: string): void => dispatch(setBattlePhase(phase)),
+    setEnemyField: (field): void => dispatch(setEnemyField(field)),
+    receiveShot: (position): void => dispatch(receiveShot(position)),
+    canPlayerShoot: (bool: boolean): void => dispatch(canPlayerShoot(bool)),
+    resetField: (): void => dispatch(resetField()),
+    resetEnemyField: (): void => dispatch(resetEnemyField()),
   };
 };
 

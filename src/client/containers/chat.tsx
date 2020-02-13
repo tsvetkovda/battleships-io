@@ -3,37 +3,45 @@ import { connect } from 'react-redux';
 import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 import { IPlayer } from '../utils/interfaces';
-
 import { setMessage } from '../actions';
+import { RootState } from '../reducers';
 
-interface IProps {
+interface OwnProps {
+  socket: SocketIOClient.Socket;
+}
+
+interface StateProps {
   player: IPlayer;
   message: string;
-  socket: any;
+}
+
+interface DispatchProps {
   setMessage: (message: string) => void;
   setMessageClear: () => void;
 }
 
-class Chat extends Component<IProps> {
-  componentDidMount() {
+type Props = OwnProps & StateProps & DispatchProps;
+
+class Chat extends Component<Props> {
+  componentDidMount(): void {
     const { socket } = this.props;
 
-    socket.on('chatMsg', (data: { username: string; msg: string }) =>
+    socket.on('chatMsg', (data: { username: string; msg: string }): void =>
       this.handleReceiveMessage(data)
     );
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     const { socket } = this.props;
 
     socket.removeEventListener(
       'chatMsg',
-      (data: { username: string; msg: string }) =>
+      (data: { username: string; msg: string }): void =>
         this.handleReceiveMessage(data)
     );
   }
 
-  handleReceiveMessage(data: { username: string; msg: string }) {
+  handleReceiveMessage(data: { username: string; msg: string }): void {
     if (data) {
       const div = document.createElement('div');
 
@@ -43,7 +51,7 @@ class Chat extends Component<IProps> {
     }
   }
 
-  handleSendMessage() {
+  handleSendMessage(): void {
     const { message, setMessageClear, player, socket } = this.props;
 
     socket.emit('chatMsg', { username: player.name, msg: message });
@@ -51,7 +59,7 @@ class Chat extends Component<IProps> {
     setMessageClear();
   }
 
-  render() {
+  render(): JSX.Element {
     const { message, setMessage } = this.props;
 
     return (
@@ -59,11 +67,11 @@ class Chat extends Component<IProps> {
         <div className='chat' />
         <InputGroup>
           <Input
-            onChange={(event) => setMessage(event.target.value)}
+            onChange={(event): void => setMessage(event.target.value)}
             value={message}
           />
           <InputGroupAddon addonType='append'>
-            <Button onClick={() => this.handleSendMessage()}>Send</Button>
+            <Button onClick={(): void => this.handleSendMessage()}>Send</Button>
           </InputGroupAddon>
         </InputGroup>
       </>
@@ -71,16 +79,16 @@ class Chat extends Component<IProps> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState): StateProps => {
   const { player, message } = state;
 
   return { player, message };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch): DispatchProps => {
   return {
-    setMessage: (msg: string) => dispatch(setMessage(msg)),
-    setMessageClear: () => dispatch(setMessage('')),
+    setMessage: (msg: string): void => dispatch(setMessage(msg)),
+    setMessageClear: (): void => dispatch(setMessage('')),
   };
 };
 

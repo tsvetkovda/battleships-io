@@ -3,42 +3,54 @@ import { connect } from 'react-redux';
 import { Button, Container, Row, Col, Input, InputGroup } from 'reactstrap';
 
 import { IPlayer } from '../utils/interfaces';
-
 import { selectGamemode, MULTIPLAYER, setName, setRoomId } from '../actions';
+import { RootState } from '../reducers';
 
-interface IProps {
+interface OwnProps {
+  socket: SocketIOClient.Socket;
+}
+
+interface StateProps {
   player: IPlayer;
-  socket: any;
+  mode: string;
+}
+
+interface DispatchProps {
   selectMultiplayer: () => void;
   setName: (name: string) => void;
   setRoomId: (roomId: string) => void;
 }
 
-class Lobby extends Component<IProps> {
-  handleGameCreation() {
+type Props = OwnProps & StateProps & DispatchProps;
+
+class Lobby extends Component<Props> {
+  handleGameCreation(): void {
     const { socket, player, selectMultiplayer } = this.props;
 
     socket.emit('createRoom', { username: player.name, roomId: player.roomId });
 
-    socket.on('roomCreation', (data: { canCreate: boolean; msg: string }) => {
-      return data.canCreate ? selectMultiplayer() : console.log(data.msg);
-    });
+    socket.on(
+      'roomCreation',
+      (data: { canCreate: boolean; msg: string }): void => {
+        return data.canCreate ? selectMultiplayer() : console.log(data.msg);
+      }
+    );
   }
 
-  handleJoinGame() {
+  handleJoinGame(): void {
     const { socket, player, selectMultiplayer } = this.props;
 
     socket.emit('joinRoom', { username: player.name, roomId: player.roomId });
 
     socket.on(
       'playerConnection',
-      (data: { canConnect: boolean; msg: string }) => {
+      (data: { canConnect: boolean; msg: string }): void => {
         return data.canConnect ? selectMultiplayer() : console.log(data.msg);
       }
     );
   }
 
-  render() {
+  render(): JSX.Element {
     const { setName, setRoomId, player } = this.props;
 
     return (
@@ -57,7 +69,7 @@ class Lobby extends Component<IProps> {
             <h4>Your name:</h4>
             <InputGroup size='lg' className='mb-3'>
               <Input
-                onChange={(event) => setName(event.target.value)}
+                onChange={(event): void => setName(event.target.value)}
                 value={player.name}
                 className='text-center'
               />
@@ -66,7 +78,7 @@ class Lobby extends Component<IProps> {
             <InputGroup size='lg' className='mb-3'>
               <Input
                 defaultValue={player.roomId}
-                onChange={(event) => setRoomId(event.target.value)}
+                onChange={(event): void => setRoomId(event.target.value)}
                 className='text-center'
               />
             </InputGroup>
@@ -77,11 +89,11 @@ class Lobby extends Component<IProps> {
             <Button
               size='lg'
               color='primary'
-              onClick={() => this.handleGameCreation()}
+              onClick={(): void => this.handleGameCreation()}
             >
               Create game
             </Button>{' '}
-            <Button size='lg' onClick={() => this.handleJoinGame()}>
+            <Button size='lg' onClick={(): void => this.handleJoinGame()}>
               Join
             </Button>
           </Col>
@@ -91,17 +103,17 @@ class Lobby extends Component<IProps> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState): StateProps => {
   const { mode, player } = state;
 
   return { mode, player };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch): DispatchProps => {
   return {
-    selectMultiplayer: () => dispatch(selectGamemode(MULTIPLAYER)),
-    setName: (name: string) => dispatch(setName(name)),
-    setRoomId: (roomId: string) => dispatch(setRoomId(roomId)),
+    selectMultiplayer: (): void => dispatch(selectGamemode(MULTIPLAYER)),
+    setName: (name: string): void => dispatch(setName(name)),
+    setRoomId: (roomId: string): void => dispatch(setRoomId(roomId)),
   };
 };
 

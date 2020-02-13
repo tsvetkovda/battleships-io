@@ -30,6 +30,8 @@ const initialState: PlayerState = {
 const playerReducer = (
   state = initialState,
   action: PlayerTypes
+  // TODO: Refactor
+  // eslint-disable-next-line sonarjs/cognitive-complexity
 ): PlayerState => {
   switch (action.type) {
     case PLACE_SHIP: {
@@ -41,7 +43,7 @@ const playerReducer = (
       for (let i = 0; i < shipSize; i++) {
         if (orientation === HORIZONTAL) {
           const x = newState.field.find(
-            (cell: ICell) =>
+            (cell): boolean =>
               cell.x === position.x + i &&
               cell.y === position.y &&
               !(cell.locked || cell.hasShip)
@@ -52,7 +54,7 @@ const playerReducer = (
 
         if (orientation === VERTICAL) {
           const x = newState.field.find(
-            (cell: ICell) =>
+            (cell): boolean =>
               cell.x === position.x &&
               cell.y === position.y + i &&
               !(cell.locked || cell.hasShip)
@@ -66,9 +68,9 @@ const playerReducer = (
         occupiedCells.length === shipSize &&
         newState.availableShips[shipSize] > 0
       ) {
-        occupiedCells.forEach((el) => {
-          lockedCells.forEach((lock: { x: number; y: number }) => {
-            newState.field.forEach((val: ICell) => {
+        occupiedCells.forEach((el): void => {
+          lockedCells.forEach((lock: { x: number; y: number }): void => {
+            newState.field.forEach((val: ICell): void => {
               if (val.x === el.x + lock.x && val.y === el.y + lock.y) {
                 val.className = 'cell-locked';
                 val.locked = true;
@@ -82,10 +84,10 @@ const playerReducer = (
         occupiedCells.length === shipSize &&
         newState.availableShips[shipSize] > 0
       ) {
-        newState.field.forEach((el: ICell) => {
+        newState.field.forEach((el: ICell): void => {
           if (
             occupiedCells.some(
-              (cell: ICell) => cell.x === el.x && cell.y === el.y
+              (cell: ICell): boolean => cell.x === el.x && cell.y === el.y
             )
           ) {
             el.hasShip = true;
@@ -106,8 +108,8 @@ const playerReducer = (
       const { cell } = action;
 
       const newField = cloneDeep(state.field);
-      const targetCell: ICell = newField.find(
-        (el: ICell) => el.x === cell.x && el.y === cell.y
+      const targetCell = newField.find(
+        (el): boolean => el.x === cell.x && el.y === cell.y
       );
 
       if (targetCell && targetCell.hasShip) {

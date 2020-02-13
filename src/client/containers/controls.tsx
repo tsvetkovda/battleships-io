@@ -3,17 +3,23 @@ import { connect } from 'react-redux';
 import { Button, ButtonGroup, Badge } from 'reactstrap';
 
 import SelectShipButton from '../components/selectShipButton';
-
 import { selectShip, changeOrientation, resetField } from '../actions';
+import { RootState } from '../reducers';
 
-interface IProps {
+interface StateProps {
   orientation: string;
+}
+
+interface DispatchProps {
+  selectShip: (size: number) => void;
   changeOrientation: () => void;
   resetField: () => void;
 }
 
-class Controls extends Component<IProps> {
-  render() {
+type Props = StateProps & DispatchProps;
+
+class Controls extends Component<Props> {
+  render(): JSX.Element {
     const { resetField, orientation, changeOrientation } = this.props;
 
     return (
@@ -37,17 +43,17 @@ class Controls extends Component<IProps> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState): StateProps => {
   const { orientation } = state;
 
   return { orientation };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch): DispatchProps => {
   return {
-    selectShip: (size: number) => dispatch(selectShip(size)),
-    changeOrientation: () => dispatch(changeOrientation()),
-    resetField: () => dispatch(resetField()),
+    selectShip: (size: number): void => dispatch(selectShip(size)),
+    changeOrientation: (): void => dispatch(changeOrientation()),
+    resetField: (): void => dispatch(resetField()),
   };
 };
 

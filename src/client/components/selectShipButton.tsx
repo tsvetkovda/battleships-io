@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Badge } from 'reactstrap';
 
-import { selectShip } from '../actions/index';
+import { selectShip, ControlsTypes } from '../actions/index';
 
 interface Props {
   shipSize: number;
@@ -24,7 +24,7 @@ const SelectShipButton = (props: Props): JSX.Element => {
     <Button
       color='primary'
       outline
-      onClick={() => dispatch(selectShip(shipSize))}
+      onClick={(): ControlsTypes => dispatch(selectShip(shipSize))}
       active={selectedShipSize === shipSize && availableShips[shipSize] > 0}
     >
       {innerHtml} <Badge color={badgeColor}>{badgeInnerHtml}</Badge>
