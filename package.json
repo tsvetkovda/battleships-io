@@ -9,7 +9,7 @@
     "start": "node ./src/server/index.ts",
     "test": "jest",
     "lint": "eslint --ext .tsx --ext .ts src/",
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production --display-error-details",
     "watch": "webpack --mode=development --watch --debug --display-error-details",
     "dev": "webpack-dev-server",
     "server": "nodemon ./src/server/index.ts"

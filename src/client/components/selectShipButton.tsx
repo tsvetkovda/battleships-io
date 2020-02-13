@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Badge } from 'reactstrap';
 
 import { selectShip, ControlsTypes } from '../actions/index';
+import { RootState } from '../reducers';
+import { IAvailableShips } from '../utils/interfaces';
 
 interface Props {
   shipSize: number;
@@ -11,8 +13,12 @@ interface Props {
 const SelectShipButton = (props: Props): JSX.Element => {
   const { shipSize } = props;
 
-  const availableShips = useSelector((state) => state.player.availableShips);
-  const selectedShipSize = useSelector((state) => state.selectedShipSize);
+  const availableShips = useSelector(
+    (state: RootState): IAvailableShips => state.player.availableShips
+  );
+  const selectedShipSize = useSelector(
+    (state: RootState): number => state.selectedShipSize
+  );
 
   const badgeColor = availableShips[shipSize] > 0 ? 'secondary' : 'danger';
   const innerHtml = `Size: ${shipSize}`;

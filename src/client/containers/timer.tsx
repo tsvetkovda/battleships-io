@@ -33,6 +33,7 @@ interface DispatchProps {
 type Props = OwnProps & StateProps & DispatchProps;
 
 class Timer extends Component<Props> {
+  timerId: any;
   constructor(props: Props) {
     super(props);
 

@@ -33,11 +33,6 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(ts|js)x?$/,
-        use: 'babel-loader',
-        exclude: /node_modules/,
-      },
-      {
         test: /\.jpe?g|png|gif|svg$/,
         exclude: /node_modules/,
         use: {

@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import cloneDeep from '../utils/cloneDeep';
 import generateField from '../utils/generateField';
 import generateRoomId from '../utils/generateRoomId';
@@ -27,11 +28,10 @@ const initialState: PlayerState = {
   canShoot: false,
 };
 
+// TODO: Refactor
 const playerReducer = (
   state = initialState,
   action: PlayerTypes
-  // TODO: Refactor
-  // eslint-disable-next-line sonarjs/cognitive-complexity
 ): PlayerState => {
   switch (action.type) {
     case PLACE_SHIP: {
@@ -87,7 +87,7 @@ const playerReducer = (
         newState.field.forEach((el: ICell): void => {
           if (
             occupiedCells.some(
-              (cell: ICell): boolean => cell.x === el.x && cell.y === el.y
+              (cell): boolean => cell.x === el.x && cell.y === el.y
             )
           ) {
             el.hasShip = true;
