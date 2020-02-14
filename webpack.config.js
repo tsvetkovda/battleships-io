@@ -1,15 +1,23 @@
 const path = require('path');
+const glob = require('glob');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const PurgecssPlugin = require('purgecss-webpack-plugin');
+
+const PATHS = {
+  src: path.join(__dirname, 'src'),
+  dist: path.join(__dirname, 'dist'),
+  node: path.join(__dirname, 'node_modules'),
+};
 
 module.exports = {
   entry: './src/index.tsx',
 
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: PATHS.dist,
   },
 
   resolve: {
@@ -23,18 +31,18 @@ module.exports = {
           {
             test: /\.html$/,
             use: 'html-loader',
-            exclude: /node_modules/,
+            exclude: PATHS.node,
           },
         ],
       },
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: PATHS.node,
       },
       {
         test: /\.jpe?g|png|gif|svg$/,
-        exclude: /node_modules/,
+        exclude: PATHS.node,
         use: {
           loader: 'file-loader',
           options: {
@@ -43,8 +51,8 @@ module.exports = {
         },
       },
       {
-        test: /\.css|scss$/,
-        exclude: /node_modules/,
+        test: /\.s?css/,
+        exclude: PATHS.node,
         use: [
           { loader: MiniCssExtractPlugin.loader },
           'css-loader',
@@ -75,11 +83,14 @@ module.exports = {
       filename: '[name].css',
       ignoreOrder: false,
     }),
+    new PurgecssPlugin({
+      paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
+    }),
   ],
 
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin({ exclude: PATHS.node, extractComments: 'all' })],
   },
 
   devServer: {
