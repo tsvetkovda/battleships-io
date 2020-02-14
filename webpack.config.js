@@ -3,6 +3,8 @@ const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const PurgecssPlugin = require('purgecss-webpack-plugin');
+const glob = require('glob-all');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -46,7 +48,7 @@ module.exports = {
         test: /\.css|scss$/,
         exclude: /node_modules/,
         use: [
-          { loader: MiniCssExtractPlugin.loader },
+          MiniCssExtractPlugin.loader,
           'css-loader',
           {
             loader: 'postcss-loader',
@@ -74,6 +76,12 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].css',
       ignoreOrder: false,
+    }),
+    new PurgecssPlugin({
+      paths: glob.sync(['./node_modules/bootstrap/**/*', './src/**/*'], {
+        dot: true,
+        nodir: true,
+      }),
     }),
   ],
 
